@@ -62,7 +62,7 @@ const findActivitiesByBounds = async (southwest, northeast) => {
         let locations = await Activity.find({
             location: {
                 $geoWithin: {
-                    $box: [southwest,northeast]
+                    $box: [southwest, northeast]
                 }
             }
         }, { _id:0, 'location.coordinates':1 });

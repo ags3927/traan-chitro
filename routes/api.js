@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+
 router.get('/', function(req, res, next) {
   try {
     return res.status(200).send({
@@ -22,5 +23,8 @@ router.get('/test', async function (req, res) {
     return res.sendStatus(400);
   }
 });
+
+router.get('/pins', );
+
 
 module.exports = router;
