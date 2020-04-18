@@ -4,20 +4,20 @@ process.env.VUE_APP_API_KEY = 'AIzaSyBdudQyn0ECon1ggxM-i3t4xhbQTVYAgLA';
 process.env.MONGODB_URI = 'mongodb+srv://arshuvo:ars123456789@tran-chitrodb-hge7d.mongodb.net/tran-chitro?retryWrites=true&w=majority';
 require('./db/mongoose');
 
-let history = require('connect-history-api-fallback');
-let cors = require('cors');
-let bodyParser=require('body-parser');
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+const history = require('connect-history-api-fallback');
+const cors = require('cors');
+const bodyParser=require('body-parser');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
 //Routers
-let indexRouter = require('./routes');
-let apiRouter = require('./routes/api');
+const indexRouter = require('./routes');
+const apiRouter = require('./routes/api');
 
-let app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //SPA Handling
-let staticFileMiddleware = express.static(path.join(__dirname+'/dist'));
+const staticFileMiddleware = express.static(path.join(__dirname+'/dist'));
 app.use(staticFileMiddleware);
 app.use(history());
 app.use(staticFileMiddleware);

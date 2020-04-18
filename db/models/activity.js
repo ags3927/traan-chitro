@@ -1,8 +1,8 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
-let activitySchema = new Schema({
+const activitySchema = new Schema({
     orgName: {
         type: String,
         required: true,
@@ -21,10 +21,10 @@ let activitySchema = new Schema({
         }
     }
 
-})
+});
 
 activitySchema.indexes({location: '2dsphere'});
 
-let Activity = mongoose.model('Activity', activitySchema);
+const Activity = mongoose.model('Activity', activitySchema);
 
 module.exports = {Activity};

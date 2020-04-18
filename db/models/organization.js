@@ -1,16 +1,16 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-let organizationSchema = new Schema({
+const organizationSchema = new Schema({
     name: {
         type: String,
         required: true,
         minLength: 1,
         trim: true
     }
-})
+});
 
-let Organization = mongoose.model('Organization', organizationSchema);
+const Organization = mongoose.model('Organization', organizationSchema);
 
 module.exports = {Organization};
