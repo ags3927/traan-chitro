@@ -1,59 +1,48 @@
 const NodeCache = require("node-cache");
+const cache = new NodeCache();
 
-/**
- * todo: discuss whether we should update the cache after every udpate operation or not.
- * implementation trivia:
- *      we get a clone by default from the cache. in case we want to update every time a
- *      change happens in the db, we may want to get the reference instead of a copy.
- */
+const get = (key) => {
+  const defaultValue = {
+    found: false,
+    data: null,
+  };
 
-class CacheManager {
-  // The constructor was supposed to be private
-  // Never call the constructor yourself -_-
-  constructor() {
-    this.cache = new NodeCache();
-  }
-
-  // call the getInstance function instead of the constructor
-  static getInstance() {
-    if (!CacheManager.instance) {
-      CacheManager.instance = new CacheManager();
+  try {
+    if (cache.has(key)) {
+      return {
+        found: true,
+        data: cache.get(key),
+      };
     }
-
-    return CacheManager.instance;
+  } catch (err) {
+    console.log(err);
   }
 
-  /**
-   * gets a value from the cache if it is in the cache, or sets it and then returns the value
-   * @param {String} key: the key to search for
-   * @param {asynchronus callback function} storeFunction: to be called to get the value for if not found in the cache
-   * @param {integer} ttlSecond: time (in seconds) to keep the value in cache, defalut value is 30 minutes
-   */
-  async get(key, storeFunction, ttlSecond = 1800) {
-    let value;
+  return defaultValue;
+};
 
-    if (this.cache.has(key)) {
-      // the key was found in the cache
-      value = this.cache.get(key);
-    } else {
-      // we didn't find the key in the array, so we resolve the value
-      // and save it in the cache for later use
-      value = await storeFunction();
-      this.cache.set(key, value, ttlSecond);
-    }
+const setWithExpiration = (key, val, expirationTimeInSeconds) => {
+  let status = "OK";
 
-    return value;
+  try {
+    cache.set(key, val, expirationTimeInSeconds);
+  } catch (err) {
+    status = "Error";
   }
 
-  // deletes some value from the cache
-  del(keys) {
-    this.cache.del(keys);
-  }
+  return { status };
+};
 
-  // flushes the whole cache
-  flush() {
-    this.cache.flushAll();
-  }
-}
+const set = (key, val) => setWithExpiration(key, val, 0); // 0 means unlimited expiration in node-cache
 
-module.exports = CacheManager;
+const del = (key) => cache.del(key);
+
+const flush = () => cache.flushAll();
+
+module.exports = {
+  get,
+  set,
+  setWithExpiration,
+  del,
+  flush,
+};

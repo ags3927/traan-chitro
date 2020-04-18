@@ -1,25 +1,33 @@
 // needs rigorous testing.
 
 const organizationInterface = require("../interfaces/organizationInterface");
-const cacheManager = require("../cache").getInstance();
+const cache = require("../cache");
 
 const findAllOrganizationNames = async () => {
-  return await cacheManager.get(
-    "allOrganizationName",
-    organizationInterface.findAllOrganizationNames,
-    24 * 3600 // caching for a day
-  );
-};
-
-const cacheCallbackWraper = (func, param) => {
-  return async () => func(...param);
+  const cacheResult = cache.get("allOrganizationName");
+  if (cacheResult.found) {
+    return cacheResult.data;
+  } else {
+    const value = await organizationInterface.findAllOrganizationNames();
+    cache.set("allOrganizationName", value);
+    return value;
+  }
 };
 
 const findAllActivitesOfOrganization = async (orgName) => {
-  return await cacheManager.get(
-    "orgName",
-    cacheCallbackWraper(organizationInterface.findAllActivitesOfOrganization, [
-      orgName,
-    ])
-  );
+  const cacheResult = cache.get(orgName);
+  if (cacheResult.found) {
+    return cacheResult.data;
+  } else {
+    const value = await organizationInterface.findAllActivitesOfOrganization(
+      orgName
+    );
+    cache.setWithExpiration(orgName, value, 30 * 60); // 30 minute expiration period
+    return value;
+  }
+};
+
+module.exports = {
+  findAllOrganizationNames,
+  findAllActivitesOfOrganization,
 };
