@@ -1,3 +1,6 @@
+let history = require('connect-history-api-fallback');
+let cors = require('cors');
+let bodyParser=require('body-parser');
 let createError = require('http-errors');
 let express = require('express');
 let path = require('path');
@@ -17,7 +20,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'dist')));
+let staticFileMiddleware = express.static(path.join(__dirname+'/dist'));
+app.use(staticFileMiddleware);
+app.use(history());
+app.use(staticFileMiddleware);
+app.use(bodyParser.json());
+app.use(cors());
 
 //INDEX ROUTES
 app.use('/', indexRouter);
