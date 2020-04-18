@@ -27,7 +27,7 @@ class CacheManager {
    * gets a value from the cache if it is in the cache, or sets it and then returns the value
    * @param {String} key: the key to search for
    * @param {asynchronus callback function} storeFunction: to be called to get the value for if not found in the cache
-   * @param {integer} ttlSecond: time (in seconds) to keep the value in cache, defalut value is 30 minutes
+   * @param {number} ttlSecond: time (in seconds) to keep the value in cache, defalut value is 30 minutes
    */
   async get(key, storeFunction, ttlSecond = 1800) {
     let value;
