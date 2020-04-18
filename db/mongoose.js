@@ -1,21 +1,15 @@
 let mongoose = require('mongoose');
 
-process.env.MONGODB_URI = 'mongodb://localhost:27017/tran-chitro';
 
-let connectDB = async () => {
-    try{
-            await mongoose.connect(process.env.MONGODB_URI, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            //autoIndex: false
-        });
-    } catch (e) {
-        console.log(e);
-    }
-}
+mongoose.connect(process.env.MONGODB_URI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    //autoIndex: false
+}).then(() => {
+    console.log('You are connected to database.')
+}).catch((err) => {
+    console.log(err.message);
+    process.exit();
+});
 
-let closeDB = () => {
-    mongoose.connection.close();   // this function has some problems
-}
-
-module.exports = {connectDB,closeDB} ;
+module.exports = {mongoose} ;
