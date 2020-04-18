@@ -2,7 +2,7 @@
 process.env.VUE_APP_API_KEY = 'AIzaSyBdudQyn0ECon1ggxM-i3t4xhbQTVYAgLA';
 
 process.env.MONGODB_URI = 'mongodb+srv://arshuvo:ars123456789@tran-chitrodb-hge7d.mongodb.net/tran-chitro?retryWrites=true&w=majority';
-require('db/mongoose');
+require('./db/mongoose');
 
 let history = require('connect-history-api-fallback');
 let cors = require('cors');
