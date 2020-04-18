@@ -68,6 +68,8 @@ const findAllOrganizationNames = async () => {
   }
 };
 
+const findAllActivitesOfOrganization = async (orgName) => null;
+
 module.exports = {
   insertOrganization,
   deleteOrganization,
@@ -75,4 +77,5 @@ module.exports = {
   findAllOrganizations,
   findOrganizationByName,
   findAllOrganizationNames,
+  findAllActivitesOfOrganization,
 };

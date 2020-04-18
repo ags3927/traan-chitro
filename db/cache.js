@@ -35,14 +35,11 @@ class CacheManager {
     if (this.cache.has(key)) {
       // the key was found in the cache
       value = this.cache.get(key);
-      console.log(`key ${key} has been found in the cache.`);
     } else {
       // we didn't find the key in the array, so we resolve the value
       // and save it in the cache for later use
       value = await storeFunction();
       this.cache.set(key, value, ttlSecond);
-
-      console.log(`key ${key} was not found in the cache.`);
     }
 
     return value;
