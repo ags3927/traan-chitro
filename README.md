@@ -1,4 +1,4 @@
-# TRAN CHITRO
+# TRAN BANGLA
 
 Notes and Conventions
 - 
