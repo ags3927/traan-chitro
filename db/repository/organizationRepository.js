@@ -14,7 +14,7 @@ const findAllOrganizationNames = async () => {
   }
 };
 
-const findAllActivitesOfOrganization = async (orgName) => {
+const findAllActivitiesOfOrganization = async (orgName) => {
   const cacheResult = cache.get(orgName);
   if (cacheResult.found) {
     return cacheResult.data;
@@ -29,5 +29,5 @@ const findAllActivitesOfOrganization = async (orgName) => {
 
 module.exports = {
   findAllOrganizationNames,
-  findAllActivitesOfOrganization,
+  findAllActivitiesOfOrganization,
 };
