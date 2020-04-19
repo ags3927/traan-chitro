@@ -5,7 +5,7 @@ const activityInterface = require('./../db/interfaces/activityInterface.js');
  * Handles the GET request for all pins within bounds, optionally filtered based on certain criteria
  * @param req
  * @param res
- * @returns {Promise<*>}
+ * @returns {Promise<[{lat, lng}]>} - Returns an array of latitude, longitude pairs
  */
 const handleGETPins = async (req, res) => {
     try {
