@@ -10,67 +10,100 @@ let insertOrganization = async (orgObject) => {
     } catch (e) {
         return null;
     }
+
 };
 
-const deleteOrganization = async (name) => {
+const deleteOrganization = async (orgName) => {
+
     try {
-        await activityInterface.deleteActivities(name);
-        return await Organization.findOneAndDelete({ name: name });
+        await activityInterface.deleteActivities(orgName);
+        return await Organization.findOneAndDelete({ orgName: orgName });
     } catch (e) {
         return null;
     }
+
 };
 
 const editOrganization = async (orgName, orgObject) => {
+
     try {
-        if (name !== orgObject.name) {
+        if (orgName !== orgObject.orgName) {
             await activityInterface.editActivities(orgName, orgObject.orgName);
         }
-        return await Organization.findOneAndUpdate({ orgName: orgName }, {
-            $set: {
-                orgName: orgObject.orgName,
-                description: orgObject.description,
-                contact: orgObject.contact
-            }
-        }, { runValidators: true } );
+
+        return await Organization.findOneAndUpdate(
+            {
+                orgName: orgName
+            },
+            {
+                $set:
+                    {
+                        orgName: orgObject.orgName,
+                        description: orgObject.description,
+                        contact: orgObject.contact
+                    }
+                },
+            {
+                runValidators: true
+            });
     } catch (e) {
         return null;
     }
+
 };
 
 const findOrganizationByName = async (orgName) => {
+
     try {
       return await Organization.find({ orgName: orgName });
     } catch (e) {
       return null;
     }
+
 };
 
 const findAllOrganizations = async () => {
+
     try {
       return await Organization.find();
     } catch (e) {
       return null;
     }
+
 };
 
 const findAllOrganizationNames = async () => {
+
     try {
       let orgObjects = await Organization.find({}, { _id: 0, orgName: 1 });
+
       return _.map(orgObjects, (orgObject) => {
           return orgObject.orgName;
       });
     } catch (e) {
       return null;
     }
+
 };
 
-const findAllActivities = async (orgName) => {
+const findAllActivitiesPrivileged = async (orgName) => {
+
     try {
-        return await activityInterface.findAllActivitiesOfOrganization(orgName);
+        return await activityInterface.findAllActivitiesOfOrganizationPrivileged(orgName);
     } catch (e) {
         return null;
     }
+
+};
+
+const findAllActivitiesNotPrivileged = async (orgName) => {
+
+    try {
+        return await activityInterface.findAllActivitiesOfOrganizationNotPrivileged(orgName);
+    } catch (e) {
+        return null;
+    }
+
 };
 
 module.exports = {
@@ -80,5 +113,6 @@ module.exports = {
     findAllOrganizations,
     findOrganizationByName,
     findAllOrganizationNames,
-    findAllActivities
+    findAllActivitiesPrivileged,
+    findAllActivitiesNotPrivileged
 };
