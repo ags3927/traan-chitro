@@ -68,14 +68,11 @@ const findAllOrganizationNames = async () => {
     }
 };
 
-const findAllActivitesOfOrganization = async (orgName) => null;
-
 module.exports = {
-    insertOrganization,
-    deleteOrganization,
-    editOrganization,
-    findAllOrganizations,
-    findOrganizationByName,
-    findAllOrganizationNames,
-    findAllActivitesOfOrganization,
+  insertOrganization,
+  deleteOrganization,
+  editOrganization,
+  findAllOrganizations,
+  findOrganizationByName,
+  findAllOrganizationNames,
 };
