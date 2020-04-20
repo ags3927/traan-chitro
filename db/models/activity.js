@@ -2,22 +2,23 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-function validatePoint(coordinates) {
+const validatePoint = [
+    function validatePoint(coordinates) {
+        // must have 2 points
+        if (coordinates.length !== 2) {
+            throw new mongoose.Error('Point ' + coordinates + ' must contain two coordinates');
+        }
 
-    // must have 2 points
-    if (coordinates.length !== 2) {
-        throw new mongoose.Error('Point ' + coordinates + ' must contain two coordinates');
+        // longitude must be within bounds
+        if (coordinates[0] > 180 || coordinates[0] < -180) {
+            throw new mongoose.Error('invalid longitude');
+        }
+        // latitude must be within bounds
+        if (coordinates[1] > 90 || coordinates[1] < -90) {
+            throw new mongoose.Error('invalid latitude');
+        }
     }
-
-    // longitude must be within bounds
-    if (coordinates[0] > 180 || coordinates[0] < -180) {
-        throw new mongoose.Error('invalid longitude');
-    }
-    // latitude must be within bounds
-    if (coordinates[1] > 90 || coordinates[1] < -90) {
-        throw new mongoose.Error('invalid latitude');
-    }
-}
+];
 
 const activitySchema = new Schema({
     orgName: {
@@ -40,9 +41,7 @@ const activitySchema = new Schema({
         coordinates: {
             type: [Number],
             required: true,
-            validate: {
-                validator: validatePoint
-            }
+            validate: validatePoint
         }
     },
     supplyDate: {
