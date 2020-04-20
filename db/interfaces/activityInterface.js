@@ -102,7 +102,7 @@ const resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filte
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             location: {
                 $geoWithin: {
@@ -157,7 +157,7 @@ const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) 
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             location: {
                 $geoWithin: {
@@ -199,7 +199,7 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
         }, {
@@ -232,7 +232,7 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (l
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
         }, {
@@ -265,7 +265,7 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = asy
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
         }, {
@@ -302,7 +302,7 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async 
                 $in: filter.typeOfRelief
             },
             deliveryDate: {
-                $gt: moment().valueOf()
+                $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
         }, {
