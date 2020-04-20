@@ -1,118 +1,78 @@
-let _ = require("lodash");
+const _ = require("lodash");
 
-let { Organization } = require("../models/organization");
-let activityInterface = require("./activityInterface");
+const { Organization } = require("../models/organization");
+const activityInterface = require("./activityInterface");
 
-let insertOrganization = async (orgObject) => {
+const insertOrganization = async (orgObject) => {
+    let organization = new Organization({
+        name: orgObject.name,
+    });
 
     try {
-        return await new Organization(orgObject).save();
+        return await Organization.collection.insertOne(organization);
     } catch (e) {
         return null;
     }
-
 };
 
-const deleteOrganization = async (orgName) => {
+// let insertOrganizations = async (orgObjectArray) => {
+//     try {
+//         return await Organization.collection.insertMany(orgObjectArray, { ordered: false});
+//     } catch (e) {
+//         console.log(e);
+//     }
+// }
 
+const deleteOrganization = async (name) => {
     try {
-        await activityInterface.deleteActivities(orgName);
-        return await Organization.findOneAndDelete({ orgName: orgName });
+        activityInterface.deleteActivities(name).then((doc) => console.log(doc));
+        return await Organization.collection.deleteOne({ name: name });
     } catch (e) {
         return null;
     }
-
 };
 
-const editOrganization = async (orgName, orgObject) => {
-
+const editOrganization = async (name, orgObject) => {
     try {
-        if (orgName !== orgObject.orgName) {
-            await activityInterface.editActivities(orgName, orgObject.orgName);
-        }
-
-        return await Organization.findOneAndUpdate(
-            {
-                orgName: orgName
-            },
-            {
-                $set:
-                    {
-                        orgName: orgObject.orgName,
-                        description: orgObject.description,
-                        contact: orgObject.contact
-                    }
-                },
-            {
-                runValidators: true
-            });
+        await activityInterface.editActivities(name, orgObject.name);
+        return await Organization.collection.replaceOne({ name: name }, orgObject);
     } catch (e) {
         return null;
     }
-
 };
 
 const findOrganizationByName = async (orgName) => {
-
     try {
-      return await Organization.find({ orgName: orgName });
+        return await Organization.find({ name: orgName });
     } catch (e) {
-      return null;
+        return null;
     }
-
 };
 
 const findAllOrganizations = async () => {
-
     try {
-      return await Organization.find();
+        return await Organization.find();
     } catch (e) {
-      return null;
+        return null;
     }
-
 };
 
 const findAllOrganizationNames = async () => {
-
     try {
-      let orgObjects = await Organization.find({}, { _id: 0, orgName: 1 });
-
-      return _.map(orgObjects, (orgObject) => {
-          return orgObject.orgName;
-      });
-    } catch (e) {
-      return null;
-    }
-
-};
-
-const findAllActivitiesPrivileged = async (orgName) => {
-
-    try {
-        return await activityInterface.findAllActivitiesOfOrganizationPrivileged(orgName);
+        let orgNames = await Organization.find({}, { _id: 0, name: 1 });
+        return _.map(orgNames, (orgName) => {
+            return orgName.name;
+        });
     } catch (e) {
         return null;
     }
-
-};
-
-const findAllActivitiesNotPrivileged = async (orgName) => {
-
-    try {
-        return await activityInterface.findAllActivitiesOfOrganizationNotPrivileged(orgName);
-    } catch (e) {
-        return null;
-    }
-
 };
 
 module.exports = {
-    insertOrganization,
-    deleteOrganization,
-    editOrganization,
-    findAllOrganizations,
-    findOrganizationByName,
-    findAllOrganizationNames,
-    findAllActivitiesPrivileged,
-    findAllActivitiesNotPrivileged
+  insertOrganization,
+  deleteOrganization,
+  editOrganization,
+  findAllOrganizations,
+  findOrganizationByName,
+  findAllOrganizationNames,
 };

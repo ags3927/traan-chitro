@@ -1,116 +1,148 @@
-let _ = require("lodash");
-let moment = require("moment");
+const mongoose = require("mongoose");
+const _ = require("lodash");
+const moment = require("moment");
 
-let { Activity } = require("../models/activity");
+const { Activity } = require("../models/activity");
+const ObjectId = mongoose.Types.ObjectId;
 
-let reliefTypes = ['FOOD', 'PPE', 'MASK', 'SANITIZER', 'GLOVES'];
+const reliefTypes = ["FOOD", "PPE", "MASK", "SANITIZER", "GLOVE"];
 
-let insertActivity = async (activityObject) => {
+
+const insertActivity = async (activityObject) => {
+    let activity = new Activity({
+        orgName: activityObject.orgName,
+        location: activityObject.location,
+    });
 
     try {
-        return await new Activity(activityObject).save();
+        return await Activity.collection.insertOne(activity);
     } catch (e) {
         return null;
     }
-
 };
 
-let insertActivities = async (activityObjectArray) => {
-
+const insertActivities = async (activityObjectArray) => {
     try {
-        return await Activity.create(activityObjectArray);
+        return await Activity.collection.insertMany(activityObjectArray, {
+            ordered: false,
+        });
     } catch (e) {
         return null;
     }
-
 };
 
-let deleteActivity = async (id) => {
-
+const deleteActivity = async (id) => {
     try {
-        return await Activity.findByIdAndDelete(id);
+        return await Activity.collection.deleteOne({ _id: ObjectId(id) });
     } catch (e) {
         return null;
     }
-
 };
 
-let deleteActivities = async (orgName) => {
-
+const deleteActivities = async (orgName) => {
     try {
-        return await Activity.deleteMany({ orgName: orgName });
+        return await Activity.collection.deleteMany({ orgName: orgName });
     } catch (e) {
         return null;
     }
-
 };
 
-let editActivity = async (id, activityObject) => {
-
+const editActivity = async (id, activityObject) => {
     try {
-        return await Activity.findByIdAndUpdate(id,
-            {
-                $set:
-                    {
-                        typeOfRelief: activityObject.typeOfRelief,
-                        location: activityObject.location,
-                        supplyDate: activityObject.supplyDate,
-                        contents: activityObject.contents
-                    }
-                   },
-            {
-                runValidators: true
-                   });
+        return await Activity.collection.replaceOne({
+            _id: ObjectId(id)
+        }, activityObject);
     } catch (e) {
         return null;
     }
-
 };
 
-let editActivities = async (prevOrgName, updatedOrgName) => {
-
+const editActivities = async (prevOrgName, updatedOrgName) => {
     try {
-        return await Activity.updateMany(
-            {
-                orgName: prevOrgName
+        return await Activity.updateMany({
+            orgName: prevOrgName
+        }, {
+            $set: {
+                orgName: updatedOrgName
+            }
+        });
+    } catch (e) {
+        return null;
+    }
+};
+
+const resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filter) => {
+    if (filter.schedule === "PAST") {
+        let locations = await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
             },
-            {
-                $set:
-                    {
-                        orgName: updatedOrgName
-                    }
+            deliveryDate: {
+                $lt: moment().valueOf()
             },
-            {
-                runValidators: true
-            });
-    } catch (e) {
-        return null;
-    }
+            location: {
+                $geoWithin: {
+                    $box: [ [bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat] ],
+                }
+            }
+        }, {
+            _id: 0,
+            "location.coordinates": 1
+        });
 
+    return _.map(locations, (element) => {
+        return {
+            lat: element.location.coordinates[1],
+            lng: element.location.coordinates[0],
+        };
+    });
+    } else {
+        let locations = await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            location: {
+                $geoWithin: {
+                    $box: [ [bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat] ],
+                }
+            }
+        }, {
+            _id: 0,
+            "location.coordinates": 1
+        });
+
+        return _.map(locations, (element) => {
+            return {
+                lat: element.location.coordinates[1],
+                lng: element.location.coordinates[0],
+            };
+        });
+    }
 };
 
-let resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filter) => {
+const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) => {
 
     if (filter.schedule === "PAST") {
-        let locations = await Activity.find(
-            {
-                typeOfRelief: {
-                        $in: filter.typeOfRelief
-                    },
-                supplyDate: {
-                    $lt: moment().valueOf()
-                },
-                location: {
-                    $geoWithin: {
-                        $box: [ [bounds.southwest.lng, bounds.southwest.lat],
-                            [bounds.northeast.lng, bounds.northeast.lat] ]
-                    }
-                }
+        let locations = await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
             },
-            {
-                _id: 0,
-                "location.coordinates": 1
-            });
+            deliveryDate: {
+                $lt: moment().valueOf()
+            },
+            location: {
+                $geoWithin: {
+                 $box: [ [bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat] ],
+                }
+            }
+        }, {
+            _id: 0,
+            "location.coordinates": 1
+        });
 
         return _.map(locations, (element) => {
             return {
@@ -119,172 +151,248 @@ let resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filter)
             };
         });
     } else {
-        let locations = await Activity.find(
-            {
-                typeOfRelief: {
-                    $in: filter.typeOfRelief
-                },
-                supplyDate: {
-                    $gte: moment().valueOf()
-                },
-                location: {
-                    $geoWithin: {
-                        $box: [ [bounds.southwest.lng, bounds.southwest.lat],
-                            [bounds.northeast.lng, bounds.northeast.lat] ]
-                    }
-                }
+        let locations = await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
             },
-            {
-                _id: 0,
-                "location.coordinates": 1
-            });
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            location: {
+                $geoWithin: {
+                $box: [ [bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat] ],
+                }
+            }
+        }, {
+            _id: 0,
+            "location.coordinates": 1
+        });
 
         return _.map(locations, (element) => {
             return {
                 lat: element.location.coordinates[1],
-                lng: element.location.coordinates[0]
+                lng: element.location.coordinates[0],
             };
         });
     }
 };
 
-let resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) => {
-
+const resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async (location, filter) => {
     if (filter.schedule === "PAST") {
-        let locations = await Activity.find(
-            {
-                orgName: filter.orgName,
-                typeOfRelief: {
-                    $in: filter.typeOfRelief
-                },
-                supplyDate: {
-                    $lt: moment().valueOf()
-                },
-                location: {
-                    $geoWithin: {
-                        $box: [ [bounds.southwest.lng, bounds.southwest.lat],
-                            [bounds.northeast.lng, bounds.northeast.lat] ]
-                    }
-                }
+        return await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
             },
-            {
-                _id: 0,
-                "location.coordinates": 1
-            });
-
-        return _.map(locations, (element) => {
-            return {
-                lat: element.location.coordinates[1],
-                lng: element.location.coordinates[0]
-            };
+            deliveryDate: {
+                $lt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0
         });
-    } else {
-        let locations = await Activity.find(
-            {
-                orgName: filter.orgName,
-                typeOfRelief: {
-                    $in: filter.typeOfRelief
-                },
-                supplyDate: {
-                    $gte: moment().valueOf()
-                },
-                location: {
-                    $geoWithin: {
-                        $box: [ [bounds.southwest.lng, bounds.southwest.lat],
-                            [bounds.northeast.lng, bounds.northeast.lat] ]
-                    }
-                }
-            },
-            {
-                _id: 0,
-                "location.coordinates": 1
-            });
 
-        return _.map(locations, (element) => {
-            return {
-                lat: element.location.coordinates[1],
-                lng: element.location.coordinates[0]
-            };
+    } else {
+        return await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0
         });
     }
 };
 
+const resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (location, filter) => {
+    if (filter.schedule === "PAST") {
+        return await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $lt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0
+        });
 
-let findActivitiesByBounds = async (bounds, filter) => {
+    } else {
+        return await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0
+        });
+    }
+};
 
+const resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = async (location, filter) => {
+    if (filter.schedule === "PAST") {
+        return await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $lt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0,
+            supplyDate: 0,
+            contents: 0
+        });
+
+    } else {
+        return await Activity.find({
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0,
+            supplyDate: 0,
+            contents: 0
+        });
+    }
+};
+
+const resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async (location, filter) => {
+    if (filter.schedule === "PAST") {
+        return await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $lt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0,
+            supplyDate: 0,
+            contents: 0
+        });
+
+    } else {
+        return await Activity.find({
+            orgName: filter.orgName,
+            typeOfRelief: {
+                $in: filter.typeOfRelief
+            },
+            deliveryDate: {
+                $gt: moment().valueOf()
+            },
+            "location.coordinates": [location.lng, location.lat]
+        }, {
+            redundant: 0,
+            "location.type": 0,
+            supplyDate: 0,
+            contents: 0
+        });
+    }
+};
+
+const findActivitiesByBounds = async (bounds, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
-            filter.typeOfRelief = reliefTypes;
+        filter.typeOfRelief = reliefTypes;
         }
 
         if (filter.orgName === null) {
             return await resolveScheduleAndFilterByBoundsWithoutOrganization(bounds, filter);
         } else {
-           return await resolveScheduleAndFilterByBoundsWithOrganization(bounds, filter);
+            return await resolveScheduleAndFilterByBoundsWithOrganization(bounds, filter);
         }
-    } catch (e) {
-        return null;
-    }
 
+    } catch (e) {
+        return [];
+    }
 };
 
-let findActivities = async (query, options) => {
-
+const findActivitiesByCoordinatesUnprivileged = async (location, filter) => {
     try {
-        return await Activity.find(query, options);
-    } catch (e) {
-        return null;
-    }
+        if (filter.typeOfRelief.length === 0) {
+            filter.typeOfRelief = reliefTypes;
+        }
+        if (filter.orgName === null) {
+            return await resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged(location, filter);
+        } else {
+            return await resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged(location, filter);
+        }
 
+    } catch (e) {
+        console.log(e.message);
+        return [];
+    }
 };
 
-let findActivitiesByCoordsPrivileged = async (lat, lng) => {
-
+const findActivitiesByCoordinatesPrivileged = async (location, filter) => {
     try {
-        return await findActivities({ "location.coordinates": [lng, lat] }, { redundant: 0, "location.type": 0 });
-    } catch (e) {
-        return null;
-    }
+        if (filter.typeOfRelief.length === 0) {
+            filter.typeOfRelief = reliefTypes;
+        }
+        if (filter.orgName === null) {
+            return await resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged(location, filter);
+        } else {
+            return await resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged(location, filter);
+        }
 
+    } catch (e) {
+        console.log(e.message);
+        return [];
+    }
 };
 
-let findActivitiesByCoordsNotPrivileged = async (lat, lng, options) => {
-
+const findActivitiesByOrganizationUnprivileged = async (orgName) => {
     try {
-        return await findActivities({ "location.coordinates": [lng, lat] }, { redundant: 0, "location.type": 0, supplyDate: 0, contents: 0 });
+        return await Activity.find({
+            orgName
+        }, {
+            redundant: 0,
+            "location.type": 0,
+            supplyDate: 0,
+            contents: 0
+        });
     } catch (e) {
-        return null;
+        console.log(e.message);
+        return [];
     }
-
 };
 
-let findAllActivitiesOfOrganizationPrivileged = async (orgName) => {
-
+const findActivitiesByOrganizationPrivileged = async (orgName) => {
     try {
-        return await findActivities( { orgName: orgName }, { redundant: 0, "location.type": 0 });
+        return await Activity.find({
+            orgName
+        }, {
+            redundant: 0,
+            "location.type": 0
+        });
     } catch (e) {
-        return null;
+        console.log(e.message);
+        return [];
     }
-
-};
-
-let findAllActivitiesOfOrganizationNotPrivileged = async (orgName) => {
-
-    try {
-        return await findActivities(
-            {
-                orgName: orgName
-            },
-            {
-                redundant: 0,
-                "location.type": 0,
-                supplyDate: 0,
-                contents: 0
-            });
-    } catch (e) {
-        return null;
-    }
-
 };
 
 module.exports = {
@@ -295,8 +403,8 @@ module.exports = {
     editActivity,
     editActivities,
     findActivitiesByBounds,
-    findActivitiesByCoordsNotPrivileged,
-    findActivitiesByCoordsPrivileged,
-    findAllActivitiesOfOrganizationNotPrivileged,
-    findAllActivitiesOfOrganizationPrivileged
+    findActivitiesByCoordinatesUnprivileged,
+    findActivitiesByCoordinatesPrivileged,
+    findActivitiesByOrganizationUnprivileged,
+    findActivitiesByOrganizationPrivileged
 };
