@@ -2,6 +2,7 @@ const _ = require("lodash");
 
 const { Organization } = require("../models/organization");
 const activityInterface = require("./activityInterface");
+const userInterface = require("./userInterface");
 
 let insertOrganization = async (orgObject) => {
     try {
@@ -23,6 +24,7 @@ const deleteOrganization = async (orgName) => {
 const editOrganization = async (orgName, orgObject) => {
     try {
         if (orgName !== orgObject.orgName) {
+            await userInterface.updateUserByOrgName(orgName, orgObject.orgName);
             await activityInterface.editActivities(orgName, orgObject.orgName);
         }
 

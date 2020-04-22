@@ -1,9 +1,7 @@
-const mongoose = require("mongoose");
 const _ = require("lodash");
 const moment = require("moment");
 
 const { Activity } = require("../models/activity");
-const ObjectId = mongoose.Types.ObjectId;
 
 const reliefTypes = ["FOOD", "PPE", "MASK", "SANITIZER", "GLOVE"];
 
@@ -323,7 +321,7 @@ let resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async (l
     }
 };
 
-let findActivitiesByBounds = async (bounds, filter) => {
+let findActivitiesByBoundsAndFilters = async (bounds, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
         filter.typeOfRelief = reliefTypes;
@@ -340,7 +338,7 @@ let findActivitiesByBounds = async (bounds, filter) => {
     }
 };
 
-let findActivitiesByCoordinatesUnprivileged = async (location, filter) => {
+let findActivitiesByCoordinatesAndFiltersUnprivileged = async (location, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
             filter.typeOfRelief = reliefTypes;
@@ -356,7 +354,7 @@ let findActivitiesByCoordinatesUnprivileged = async (location, filter) => {
     }
 };
 
-let findActivitiesByCoordinatesPrivileged = async (location, filter) => {
+let findActivitiesByCoordinatesAndFiltersPrivileged = async (location, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
             filter.typeOfRelief = reliefTypes;
@@ -407,9 +405,9 @@ module.exports = {
     deleteActivities,
     editActivity,
     editActivities,
-    findActivitiesByBounds,
-    findActivitiesByCoordinatesUnprivileged,
-    findActivitiesByCoordinatesPrivileged,
+    findActivitiesByBoundsAndFilters,
+    findActivitiesByCoordinatesAndFiltersUnprivileged,
+    findActivitiesByCoordinatesAndFiltersPrivileged,
     findActivitiesByOrganizationUnprivileged,
     findActivitiesByOrganizationPrivileged
 };

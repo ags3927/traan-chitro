@@ -1,8 +1,8 @@
-let mongoose = require('mongoose');
-let urlRegex = require('url-regex')
+const mongoose = require('mongoose');
+const urlRegex = require('url-regex')
 
-let {isEmail} = require('validator');
-let Schema = mongoose.Schema;
+const {isEmail} = require('validator');
+const Schema = mongoose.Schema;
 
 let validateURL = (url) => {
     if (!urlRegex({exact: true}).test(url)){
@@ -16,7 +16,7 @@ let validateEmail = (email) => {
     }
 }
 
-let organizationSchema = new Schema({
+const organizationSchema = new Schema({
     orgName: {
         type: String,
         unique: true,
@@ -61,6 +61,6 @@ let organizationSchema = new Schema({
     }
 });
 
-let Organization = mongoose.model('Organization', organizationSchema);
+const Organization = mongoose.model('Organization', organizationSchema);
 
 module.exports = {Organization};
