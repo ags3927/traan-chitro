@@ -13,7 +13,9 @@ const handleGETPins = async (req, res) => {
         let bounds = JSON.parse(query.bounds);
         let filter = JSON.parse(query.filter);
         let result = await activityInterface.findActivitiesByBoundsAndFilters(bounds, filter);
-        return res.status(200).send(result);
+        return res.status(200).send({
+            locations: result
+        });
     } catch (e) {
         console.log(e.message);
         return res.status(500).send("ERROR in GET /api/pins\\Could not get pins");
