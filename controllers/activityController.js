@@ -9,8 +9,10 @@ const activityInterface = require('./../db/interfaces/activityInterface.js');
  */
 const handleGETPins = async (req, res) => {
     try {
-        let body = req.body;
-        let result = await activityInterface.findActivitiesByBounds(body.bounds, body.filter);
+        let query = req.query;
+        let bounds = JSON.parse(query.bounds);
+        let filter = JSON.parse(query.filter);
+        let result = await activityInterface.findActivitiesByBounds(bounds, filter);
         return res.status(200).send(result);
     } catch (e) {
         console.log(e.message);
