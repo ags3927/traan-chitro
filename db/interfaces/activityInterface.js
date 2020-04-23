@@ -1,83 +1,90 @@
-const mongoose = require("mongoose");
 const _ = require("lodash");
 const moment = require("moment");
 
 const { Activity } = require("../models/activity");
-const ObjectId = mongoose.Types.ObjectId;
 
 const reliefTypes = ["FOOD", "PPE", "MASK", "SANITIZER", "GLOVE"];
 
 
-const insertActivity = async (activityObject) => {
-    let activity = new Activity({
-        orgName: activityObject.orgName,
-        location: activityObject.location,
-    });
-
+let insertActivity = async (activityObject) => {
     try {
-        return await Activity.collection.insertOne(activity);
+        return await new Activity(activityObject).save();
     } catch (e) {
         return null;
     }
 };
 
-const insertActivities = async (activityObjectArray) => {
+let insertActivities = async (activityObjectArray) => {
     try {
-        return await Activity.collection.insertMany(activityObjectArray, {
-            ordered: false,
-        });
+        return await Activity.create(activityObjectArray);
     } catch (e) {
         return null;
     }
 };
 
-const deleteActivity = async (id) => {
+let deleteActivity = async (id) => {
     try {
-        return await Activity.collection.deleteOne({ _id: ObjectId(id) });
+        return await Activity.findByIdAndDelete(id);
     } catch (e) {
         return null;
     }
 };
 
-const deleteActivities = async (orgName) => {
+let deleteActivities = async (orgName) => {
     try {
-        return await Activity.collection.deleteMany({ orgName: orgName });
+        return await Activity.deleteMany({ orgName: orgName });
     } catch (e) {
         return null;
     }
 };
 
-const editActivity = async (id, activityObject) => {
+let editActivity = async (id, activityObject) => {
     try {
-        return await Activity.collection.replaceOne({
-            _id: ObjectId(id)
-        }, activityObject);
+        return await Activity.findByIdAndUpdate(id,
+            {
+                $set:
+                    {
+                        typeOfRelief: activityObject.typeOfRelief,
+                        location: activityObject.location,
+                        supplyDate: activityObject.supplyDate,
+                        contents: activityObject.contents
+                    }
+            },
+            {
+                runValidators: true
+            });
     } catch (e) {
         return null;
     }
 };
 
-const editActivities = async (prevOrgName, updatedOrgName) => {
+let editActivities = async (prevOrgName, updatedOrgName) => {
     try {
-        return await Activity.updateMany({
-            orgName: prevOrgName
-        }, {
-            $set: {
-                orgName: updatedOrgName
-            }
-        });
+        return await Activity.updateMany(
+            {
+                orgName: prevOrgName
+            },
+            {
+                $set:
+                    {
+                        orgName: updatedOrgName
+                    }
+            },
+            {
+                runValidators: true
+            });
     } catch (e) {
         return null;
     }
 };
 
-const resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filter) => {
+let resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filter) => {
     if (filter.schedule === "PAST") {
         let locations = await Activity.find({
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             location: {
@@ -101,7 +108,7 @@ const resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filte
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             location: {
@@ -123,7 +130,7 @@ const resolveScheduleAndFilterByBoundsWithoutOrganization = async (bounds, filte
     }
 };
 
-const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) => {
+let resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) => {
 
     if (filter.schedule === "PAST") {
         let locations = await Activity.find({
@@ -131,7 +138,7 @@ const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) 
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             location: {
@@ -156,7 +163,7 @@ const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) 
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             location: {
@@ -178,13 +185,13 @@ const resolveScheduleAndFilterByBoundsWithOrganization = async (bounds, filter) 
     }
 };
 
-const resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async (location, filter) => {
+let resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async (location, filter) => {
     if (filter.schedule === "PAST") {
         return await Activity.find({
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -198,7 +205,7 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -209,14 +216,14 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationPrivileged = async
     }
 };
 
-const resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (location, filter) => {
+let resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (location, filter) => {
     if (filter.schedule === "PAST") {
         return await Activity.find({
             orgName: filter.orgName,
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -231,7 +238,7 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (l
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -242,13 +249,13 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationPrivileged = async (l
     }
 };
 
-const resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = async (location, filter) => {
+let resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = async (location, filter) => {
     if (filter.schedule === "PAST") {
         return await Activity.find({
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -264,7 +271,7 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = asy
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -277,14 +284,14 @@ const resolveScheduleAndFilterByCoordinatesWithoutOrganizationUnprivileged = asy
     }
 };
 
-const resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async (location, filter) => {
+let resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async (location, filter) => {
     if (filter.schedule === "PAST") {
         return await Activity.find({
             orgName: filter.orgName,
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $lt: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -301,7 +308,7 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async 
             typeOfRelief: {
                 $in: filter.typeOfRelief
             },
-            deliveryDate: {
+            supplyDate: {
                 $gte: moment().valueOf()
             },
             "location.coordinates": [location.lng, location.lat]
@@ -314,7 +321,7 @@ const resolveScheduleAndFilterByCoordinatesWithOrganizationUnprivileged = async 
     }
 };
 
-const findActivitiesByBounds = async (bounds, filter) => {
+let findActivitiesByBoundsAndFilters = async (bounds, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
         filter.typeOfRelief = reliefTypes;
@@ -327,11 +334,11 @@ const findActivitiesByBounds = async (bounds, filter) => {
         }
 
     } catch (e) {
-        return [];
+        return null;
     }
 };
 
-const findActivitiesByCoordinatesUnprivileged = async (location, filter) => {
+let findActivitiesByCoordinatesAndFiltersUnprivileged = async (location, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
             filter.typeOfRelief = reliefTypes;
@@ -343,12 +350,11 @@ const findActivitiesByCoordinatesUnprivileged = async (location, filter) => {
         }
 
     } catch (e) {
-        console.log(e.message);
-        return [];
+        return null;
     }
 };
 
-const findActivitiesByCoordinatesPrivileged = async (location, filter) => {
+let findActivitiesByCoordinatesAndFiltersPrivileged = async (location, filter) => {
     try {
         if (filter.typeOfRelief.length === 0) {
             filter.typeOfRelief = reliefTypes;
@@ -360,12 +366,11 @@ const findActivitiesByCoordinatesPrivileged = async (location, filter) => {
         }
 
     } catch (e) {
-        console.log(e.message);
-        return [];
+        return null;
     }
 };
 
-const findActivitiesByOrganizationUnprivileged = async (orgName) => {
+let findActivitiesByOrganizationUnprivileged = async (orgName) => {
     try {
         return await Activity.find({
             orgName
@@ -376,12 +381,11 @@ const findActivitiesByOrganizationUnprivileged = async (orgName) => {
             contents: 0
         });
     } catch (e) {
-        console.log(e.message);
-        return [];
+        return null;
     }
 };
 
-const findActivitiesByOrganizationPrivileged = async (orgName) => {
+let findActivitiesByOrganizationPrivileged = async (orgName) => {
     try {
         return await Activity.find({
             orgName
@@ -390,8 +394,7 @@ const findActivitiesByOrganizationPrivileged = async (orgName) => {
             "location.type": 0
         });
     } catch (e) {
-        console.log(e.message);
-        return [];
+        return null;
     }
 };
 
@@ -402,9 +405,9 @@ module.exports = {
     deleteActivities,
     editActivity,
     editActivities,
-    findActivitiesByBounds,
-    findActivitiesByCoordinatesUnprivileged,
-    findActivitiesByCoordinatesPrivileged,
+    findActivitiesByBoundsAndFilters,
+    findActivitiesByCoordinatesAndFiltersUnprivileged,
+    findActivitiesByCoordinatesAndFiltersPrivileged,
     findActivitiesByOrganizationUnprivileged,
     findActivitiesByOrganizationPrivileged
 };
