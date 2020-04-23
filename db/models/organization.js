@@ -1,25 +1,22 @@
 const mongoose = require('mongoose');
-const validate = require('mongoose-validator');
+const urlRegex = require('url-regex')
 
+const {isEmail} = require('validator');
 const Schema = mongoose.Schema;
 
-const urlValidator = [
-    validate({
-        validator: 'isURL',
-        passIfEmpty: false,
-        message: 'Should be URL'
-    })
-];
+let validateURL = (url) => {
+    if (!urlRegex({exact: true}).test(url)){
+        throw new mongoose.Error('Invalid url');
+    }
+}
 
-let emailValidator = [
-    validate({
-        validator: 'isEmail',
-        passIfEmpty: false,
-        message: 'Should be Email'
-    })
-];
+let validateEmail = (email) => {
+    if (!isEmail(email)){
+        throw new mongoose.Error('Invalid email');
+    }
+}
 
-let organizationSchema = new Schema({
+const organizationSchema = new Schema({
     orgName: {
         type: String,
         unique: true,
@@ -43,17 +40,23 @@ let organizationSchema = new Schema({
         email: {
             type: String,
             trim: true,
-            validate: emailValidator
+            validate: {
+                validator: validateEmail
+            }
         },
         url: {
             type: String,
             trim: true,
-            validate: urlValidator
+            validate: {
+                validator: validateURL
+            }
         },
         donate: {
             type: String,
             trim: true,
-            validate: urlValidator
+            validate: {
+                validator: validateURL
+            }
         }
     }
 });

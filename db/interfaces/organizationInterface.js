@@ -2,40 +2,47 @@ const _ = require("lodash");
 
 const { Organization } = require("../models/organization");
 const activityInterface = require("./activityInterface");
+const userInterface = require("./userInterface");
 
-const insertOrganization = async (orgObject) => {
-    let organization = new Organization({
-        name: orgObject.name,
-    });
-
+let insertOrganization = async (orgObject) => {
     try {
-        return await Organization.collection.insertOne(organization);
+        return await new Organization(orgObject).save();
     } catch (e) {
         return null;
     }
 };
 
-// let insertOrganizations = async (orgObjectArray) => {
-//     try {
-//         return await Organization.collection.insertMany(orgObjectArray, { ordered: false});
-//     } catch (e) {
-//         console.log(e);
-//     }
-// }
-
-const deleteOrganization = async (name) => {
+const deleteOrganization = async (orgName) => {
     try {
-        activityInterface.deleteActivities(name).then((doc) => console.log(doc));
-        return await Organization.collection.deleteOne({ name: name });
+        await activityInterface.deleteActivities(orgName);
+        return await Organization.findOneAndDelete({ orgName: orgName });
     } catch (e) {
         return null;
     }
 };
 
-const editOrganization = async (name, orgObject) => {
+const editOrganization = async (orgName, orgObject) => {
     try {
-        await activityInterface.editActivities(name, orgObject.name);
-        return await Organization.collection.replaceOne({ name: name }, orgObject);
+        if (orgName !== orgObject.orgName) {
+            await userInterface.updateUserByOrgName(orgName, orgObject.orgName);
+            await activityInterface.editActivities(orgName, orgObject.orgName);
+        }
+
+        return await Organization.findOneAndUpdate(
+            {
+                orgName: orgName
+            },
+            {
+                $set:
+                    {
+                        orgName: orgObject.orgName,
+                        description: orgObject.description,
+                        contact: orgObject.contact
+                    }
+            },
+            {
+                runValidators: true
+            });
     } catch (e) {
         return null;
     }
@@ -43,7 +50,7 @@ const editOrganization = async (name, orgObject) => {
 
 const findOrganizationByName = async (orgName) => {
     try {
-        return await Organization.find({ name: orgName });
+        return await Organization.find({ orgName: orgName });
     } catch (e) {
         return null;
     }
@@ -59,9 +66,9 @@ const findAllOrganizations = async () => {
 
 const findAllOrganizationNames = async () => {
     try {
-        let orgNames = await Organization.find({}, { _id: 0, name: 1 });
-        return _.map(orgNames, (orgName) => {
-            return orgName.name;
+        let orgObjects = await Organization.find({}, { _id: 0, orgName: 1 });
+        return _.map(orgObjects, (orgObject) => {
+            return orgObject.orgName;
         });
     } catch (e) {
         return null;
@@ -76,3 +83,4 @@ module.exports = {
   findOrganizationByName,
   findAllOrganizationNames,
 };
+
