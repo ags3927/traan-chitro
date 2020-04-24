@@ -13,39 +13,67 @@ let {
 
 let insertActivity = async (activityObject) => {
     try {
-        return await new Activity(activityObject).save();
+        let data = await new Activity(activityObject).save();
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let insertActivities = async (activityObjectArray) => {
     try {
-        return await Activity.create(activityObjectArray);
+        let data = await Activity.create(activityObjectArray);
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let deleteActivity = async (id) => {
     try {
-        return await Activity.findByIdAndDelete(id);
+        let data = await Activity.findByIdAndDelete(id);
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let deleteActivities = async (orgName) => {
     try {
-        return await Activity.deleteMany({ orgName: orgName });
+        let data = await Activity.deleteMany({ orgName: orgName });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let editActivity = async (id, activityObject) => {
     try {
-        return await Activity.findByIdAndUpdate(id,
+        let data = await Activity.findByIdAndUpdate(id,
             {
                 $set:
                     {
@@ -58,14 +86,21 @@ let editActivity = async (id, activityObject) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let editActivities = async (prevOrgName, updatedOrgName) => {
     try {
-        return await Activity.updateMany(
+        let data = await Activity.updateMany(
             {
                 orgName: prevOrgName
             },
@@ -78,8 +113,15 @@ let editActivities = async (prevOrgName, updatedOrgName) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 

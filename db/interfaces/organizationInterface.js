@@ -1,23 +1,41 @@
-const _ = require("lodash");
-
 const { Organization } = require("../models/organization");
 const activityInterface = require("./activityInterface");
 const userInterface = require("./userInterface");
 
+let {
+    findOrganizationByName,
+    findAllOrganizations,
+    findAllOrganizationNames
+} = require('./libs/findOrganizations');
+
 let insertOrganization = async (orgObject) => {
     try {
-        return await new Organization(orgObject).save();
+        let data = await new Organization(orgObject).save();
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 const deleteOrganization = async (orgName) => {
     try {
         await activityInterface.deleteActivities(orgName);
-        return await Organization.findOneAndDelete({ orgName: orgName });
+        let data = await Organization.findOneAndDelete({ orgName: orgName });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
@@ -28,7 +46,7 @@ const editOrganization = async (orgName, orgObject) => {
             await activityInterface.editActivities(orgName, orgObject.orgName);
         }
 
-        return await Organization.findOneAndUpdate(
+        let data = await Organization.findOneAndUpdate(
             {
                 orgName: orgName
             },
@@ -43,35 +61,15 @@ const editOrganization = async (orgName, orgObject) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
-    }
-};
-
-const findOrganizationByName = async (orgName) => {
-    try {
-        return await Organization.find({ orgName: orgName });
-    } catch (e) {
-        return null;
-    }
-};
-
-const findAllOrganizations = async () => {
-    try {
-        return await Organization.find();
-    } catch (e) {
-        return null;
-    }
-};
-
-const findAllOrganizationNames = async () => {
-    try {
-        let orgObjects = await Organization.find({}, { _id: 0, orgName: 1 });
-        return _.map(orgObjects, (orgObject) => {
-            return orgObject.orgName;
-        });
-    } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
