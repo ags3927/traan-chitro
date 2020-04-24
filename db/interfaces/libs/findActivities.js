@@ -18,12 +18,14 @@ let findActivitiesByBoundsByQuery = async (queryOrgName,queryTypeOfRelief,queryS
         "location.coordinates": 1
     });
 
-    return _.map(locations, (element) => {
+    let coordinatesArray = _.map(locations, (element) => {
         return {
             lat: element.location.coordinates[1],
             lng: element.location.coordinates[0],
         };
     });
+
+    return Array.from(new Set(coordinatesArray.map(JSON.stringify))).map(JSON.parse);
 }
 
 let findActivitiesByCoordinatesByQuery = async (queryOrgName,queryTypeOfRelief,querySchedule,queryLocation,options) => {
