@@ -63,4 +63,9 @@ const organizationSchema = new Schema({
 
 const Organization = mongoose.model('Organization', organizationSchema);
 
-module.exports = {Organization};
+const ToBeRegisteredOrganization = mongoose.model('ToBeRegisteredOrganization', organizationSchema);
+
+module.exports = {
+    Organization,
+    ToBeRegisteredOrganization
+};
