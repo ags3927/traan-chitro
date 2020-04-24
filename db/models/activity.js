@@ -46,20 +46,9 @@ const activitySchema = new Schema({
         type: Date
     },
     contents: [{
-        _id: false,
-        item: {
-            type: String,
-            minlength:1,
-            trim: true
-        },
-        quantity: {
-            type: String,
-            trim: true
-        },
-        comment: {
-            type: String,
-            trim: true
-        }
+        type: String,
+        trim: true,
+        minlength: 1
     }],
     redundant: {
         type: Boolean,
