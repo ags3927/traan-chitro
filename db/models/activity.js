@@ -43,7 +43,8 @@ const activitySchema = new Schema({
         }
     },
     supplyDate: {
-        type: Date
+        type: Date,
+        required: true
     },
     contents: [{
         type: String,
