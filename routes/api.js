@@ -34,6 +34,8 @@ router.get('/orgs', organizationController.handleGETOrganizationNames);
 
 router.get('/orgdetails', organizationController.handleGETOrganizationDetails);
 
+router.post('/activity', activityController.handlePOSTActivity);
 
+router.post('/register', organizationController.handlePOSTRegister);
 
 module.exports = router;
