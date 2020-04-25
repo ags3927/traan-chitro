@@ -44,7 +44,14 @@ const organizationSchema = new Schema({
                 validator: validateEmail
             }
         },
-        url: {
+        facebook: {
+            type: String,
+            trim: true,
+            validate: {
+                validator: validateURL
+            }
+        },
+        website: {
             type: String,
             trim: true,
             validate: {
