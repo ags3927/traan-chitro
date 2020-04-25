@@ -10,10 +10,14 @@ const organizationInterface = require('./../db/interfaces/organizationInterface.
 const handleGETOrganizationNames = async (req, res) => {
     try {
         let result = await organizationRepository.findAllOrganizationNames();
-        return res.status(200).send(result);
+        return res.status(200).send({
+            orgNames: result
+        });
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send("ERROR in GET /api/orgs\\Could not get organization names");
+        return res.status(500).send({
+            message: "ERROR in GET /api/orgs\\Could not get organization names"
+        });
     }
 };
 
@@ -25,16 +29,20 @@ const handleGETOrganizationNames = async (req, res) => {
  */
 const handleGETOrganizationDetails = async (req, res) => {
     try {
+        let query = req.query;
+        let orgName = JSON.parse(query.orgName);
         let result;
-        if (req.body.privileged) {
-            result = await organizationRepository.findOrganizationDetailsPrivileged(req.body.orgName);
+        if (query.privileged) {
+            result = await organizationRepository.findOrganizationDetailsPrivileged(orgName);
         } else {
-            result = await organizationRepository.findOrganizationDetailsUnprivileged(req.body.orgName);
+            result = await organizationRepository.findOrganizationDetailsUnprivileged(orgName);
         }
         return res.status(200).send(result);
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send("ERROR in GET /api/orgdetails\\Could not get organization details");
+        return res.status(500).send({
+            message: "ERROR in GET /api/orgdetails\\Could not get organization details"
+        });
     }
 };
 

@@ -18,7 +18,9 @@ const handleGETPins = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send("ERROR in GET /api/pins\\Could not get pins");
+        return res.status(500).send({
+            message: "ERROR in GET /api/pins\\Could not get pins"
+        });
     }
 };
 
@@ -30,17 +32,43 @@ const handleGETPins = async (req, res) => {
  */
 const handleGETActivitiesByCoordinates = async (req, res) => {
     try {
-        let body = req.body;
+        let query = req.query;
+        let location = JSON.parse(query.location);
+        let filter = JSON.parse(query.filter);
         let result;
-        if (body.privileged) {
-            result = await activityInterface.findActivitiesByCoordinatesPrivileged(body.location, body.filter);
+        if (query.privileged) {
+            result = await activityInterface.findActivitiesByCoordinatesAndFiltersPrivileged(location, filter);
         } else {
-            result = await activityInterface.findActivitiesByCoordinatesUnprivileged(body.location, body.filter);
+            result = await activityInterface.findActivitiesByCoordinatesAndFiltersUnprivileged(location, filter);
         }
-        return res.status(200).send(result);
+        return res.status(200).send({
+            activities: result
+        });
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send("ERROR in GET /api/pins\\Could not get activities");
+        return res.status(500).send({
+            message: "ERROR in GET /api/pins\\Could not get activities"
+        });
+    }
+};
+
+
+const handlePOSTActivity = async (req, res) => {
+    try {
+        let query = req.query;
+        let data = {
+            typeOfRelief: JSON.parse(query.typeOfRelief),
+            location: JSON.parse(query.typeOfRelief),
+            contents: JSON.parse(query.contents),
+            supplyDate: JSON.parse(query.supplyDate)
+        };
+        let result = await activityInterface.createActivityAndInsert(data);
+        res.status(200).send(result);
+    } catch (e) {
+        console.log(e.message);
+        return res.status(500).send({
+            message: "ERROR in POST /api/activity\\Could not insert activity"
+        });
     }
 };
 
