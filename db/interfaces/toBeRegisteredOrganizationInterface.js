@@ -9,7 +9,8 @@ let insertToBeRegisteredOrganization = async (orgObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -24,7 +25,8 @@ const deleteToBeRegisteredOrganization = async (orgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -53,7 +55,8 @@ const editToBeRegisteredOrganization = async (orgName, orgObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }

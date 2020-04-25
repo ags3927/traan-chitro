@@ -16,7 +16,8 @@ let insertUser = async (userObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -31,7 +32,8 @@ let insertUsers = async (userObjectArray) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -47,7 +49,8 @@ let deleteUser = async (orgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -74,7 +77,8 @@ let editUser = async (orgName, userObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -98,7 +102,8 @@ let updateUserByOrganizationName = async (prevOrgName, updatedOrgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
