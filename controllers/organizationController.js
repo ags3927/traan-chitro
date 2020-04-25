@@ -12,7 +12,7 @@ const handleGETOrganizationNames = async (req, res) => {
     try {
         let result = await organizationRepository.findAllOrganizationNames();
         return res.status(200).send({
-            orgNames: result
+            orgNames: result.data
         });
     } catch (e) {
         console.log(e.message);
@@ -32,17 +32,17 @@ const handleGETOrganizationNames = async (req, res) => {
 const handleGETOrganizationDetails = async (req, res) => {
     try {
         let query = req.query;
-        let orgName = JSON.parse(query.orgName);
+        let orgName = query.orgName;
 
         let result;
-        let privileged =  (res.locals.data.status === 'OK');
+        //let privileged =  (res.locals.data.status === 'OK');
 
-        if (false) {
+        if (true) {
             result = await organizationRepository.findOrganizationDetailsPrivileged(orgName);
         } else {
             result = await organizationRepository.findOrganizationDetailsUnprivileged(orgName);
         }
-        return res.status(200).send(result);
+        return res.status(200).send(result.data);
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
@@ -62,14 +62,14 @@ const handlePOSTRegister = async (req, res) => {
                 phone: body.phone
             }
         }
-        if (data.contact.email !== null) {
+        if (body.email !== null) {
             data.contact.email = body.email;
         }
-        if (data.contact.facebook !== null) {
+        if (body.facebook !== null) {
             data.contact.facebook = body.facebook;
         }
-        if (data.contact.website !== null) {
-            data.contact.website = body.facebook;
+        if (body.website !== null) {
+            data.contact.website = body.website;
         }
 
         let result = await toBeRegisteredOrganizationInterface.insertToBeRegisteredOrganization(data);
@@ -79,11 +79,11 @@ const handlePOSTRegister = async (req, res) => {
                 message: 'Registration entry added successfully!'
             })
         } else {
-            res.send(500).send({
+            console.log(result.data);
+            res.status(500).send({
                 message: 'Could not register'
             });
         }
-
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({

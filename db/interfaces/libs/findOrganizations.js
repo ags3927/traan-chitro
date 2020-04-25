@@ -4,7 +4,7 @@ const { Organization } = require("../../models/organization");
 
 const findOrganizationByName = async (orgName) => {
     try {
-        let data = await Organization.find({ orgName: orgName });
+        let data = await Organization.findOne({ orgName: orgName });
         return {
             data,
             status: "OK"

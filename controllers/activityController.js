@@ -13,19 +13,16 @@ const handleGETPins = async (req, res) => {
         let bounds = JSON.parse(query.bounds);
         let filter = JSON.parse(query.filter);
 
-        console.log("BOUNDS  ---  ", bounds);
-        console.log("FILTER  ---  ", filter);
-
-        let privileged = (res.locals.data.status === 'OK');
+        //let privileged = (res.locals.data.status === 'OK');
         let result;
 
-        if (privileged) {
+        if (true) {
             result = await activityInterface.findActivitiesByBoundsAndFiltersPrivileged(bounds, filter);
         } else {
             result = await activityInterface.findActivitiesByBoundsAndFiltersUnprivileged(bounds, filter);
         }
         return res.status(200).send({
-            locations: result
+            locations: result.data
         });
     } catch (e) {
         console.log(e.message);
@@ -45,24 +42,25 @@ const handleGETPins = async (req, res) => {
 const handleGETActivitiesByCoordinates = async (req, res) => {
     try {
         let query = req.query;
+
         let location = JSON.parse(query.location);
         let filter = JSON.parse(query.filter);
 
         let result;
-        let privileged =  (res.locals.data.status === 'OK');
+        //let privileged =  (res.locals.data.status === 'OK');
 
-        if (privileged) {
+        if (true) {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersPrivileged(location, filter);
         } else {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersUnprivileged(location, filter);
         }
         return res.status(200).send({
-            activities: result
+            activities: result.data
         });
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
-            message: "ERROR in GET /api/pins\\Could not get activities",
+            message: "ERROR in GET /api/activities\\Could not get activities",
             error: e.message
         });
     }
@@ -71,15 +69,16 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
 
 const handlePOSTActivity = async (req, res) => {
     try {
-        let query = req.query;
-        let privileged =  (res.locals.data.status === 'OK');
+        let body = req.body;
+        //let privileged =  (res.locals.data.status === 'OK');
         let result;
-        if (privileged) {
+        if (true) {
             let data = {
-                typeOfRelief: JSON.parse(query.typeOfRelief),
-                location: JSON.parse(query.location),
-                contents: JSON.parse(query.contents),
-                supplyDate: JSON.parse(query.supplyDate)
+                orgName: res.locals.data.user.orgName,
+                typeOfRelief: body.typeOfRelief,
+                location: body.location,
+                contents: [],
+                supplyDate: new Date(body.supplyDate)
             };
             result = await activityInterface.createActivityAndInsert(data);
         }
