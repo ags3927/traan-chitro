@@ -16,10 +16,10 @@ const handleGETPins = async (req, res) => {
         console.log("BOUNDS  ---  ", bounds);
         console.log("FILTER  ---  ", filter);
 
-        let privileged = (res.locals.data.status === 'OK');
+        //let privileged = (res.locals.data.status === 'OK');
         let result;
 
-        if (privileged) {
+        if (true) {
             result = await activityInterface.findActivitiesByBoundsAndFiltersPrivileged(bounds, filter);
         } else {
             result = await activityInterface.findActivitiesByBoundsAndFiltersUnprivileged(bounds, filter);
