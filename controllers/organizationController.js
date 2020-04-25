@@ -12,7 +12,7 @@ const handleGETOrganizationNames = async (req, res) => {
     try {
         let result = await organizationRepository.findAllOrganizationNames();
         return res.status(200).send({
-            orgNames: result
+            orgNames: result.data
         });
     } catch (e) {
         console.log(e.message);
@@ -42,7 +42,7 @@ const handleGETOrganizationDetails = async (req, res) => {
         } else {
             result = await organizationRepository.findOrganizationDetailsUnprivileged(orgName);
         }
-        return res.status(200).send(result);
+        return res.status(200).send(result.data);
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
