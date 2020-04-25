@@ -32,7 +32,7 @@ const handleGETOrganizationNames = async (req, res) => {
 const handleGETOrganizationDetails = async (req, res) => {
     try {
         let query = req.query;
-        let orgName = JSON.parse(query.orgName);
+        let orgName = query.orgName;
 
         let result;
         //let privileged =  (res.locals.data.status === 'OK');

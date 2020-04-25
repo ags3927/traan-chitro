@@ -13,9 +13,6 @@ const handleGETPins = async (req, res) => {
         let bounds = JSON.parse(query.bounds);
         let filter = JSON.parse(query.filter);
 
-        console.log("BOUNDS  ---  ", bounds);
-        console.log("FILTER  ---  ", filter);
-
         //let privileged = (res.locals.data.status === 'OK');
         let result;
 
@@ -45,6 +42,7 @@ const handleGETPins = async (req, res) => {
 const handleGETActivitiesByCoordinates = async (req, res) => {
     try {
         let query = req.query;
+
         let location = JSON.parse(query.location);
         let filter = JSON.parse(query.filter);
 
@@ -76,10 +74,10 @@ const handlePOSTActivity = async (req, res) => {
         let result;
         if (true) {
             let data = {
+                orgName: query.orgName,
                 typeOfRelief: JSON.parse(query.typeOfRelief),
                 location: JSON.parse(query.location),
-                contents: JSON.parse(query.contents),
-                supplyDate: JSON.parse(query.supplyDate)
+                supplyDate: new Date(query.supplyDate)
             };
             result = await activityInterface.createActivityAndInsert(data);
         }
