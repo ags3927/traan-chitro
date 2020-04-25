@@ -62,14 +62,14 @@ const handlePOSTRegister = async (req, res) => {
                 phone: body.phone
             }
         }
-        if (data.contact.email !== null) {
+        if (body.email !== null) {
             data.contact.email = body.email;
         }
-        if (data.contact.facebook !== null) {
+        if (body.facebook !== null) {
             data.contact.facebook = body.facebook;
         }
-        if (data.contact.website !== null) {
-            data.contact.website = body.facebook;
+        if (body.website !== null) {
+            data.contact.website = body.website;
         }
 
         let result = await toBeRegisteredOrganizationInterface.insertToBeRegisteredOrganization(data);
@@ -79,11 +79,11 @@ const handlePOSTRegister = async (req, res) => {
                 message: 'Registration entry added successfully!'
             })
         } else {
-            res.send(500).send({
+            console.log(result.data);
+            res.status(500).send({
                 message: 'Could not register'
             });
         }
-
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
