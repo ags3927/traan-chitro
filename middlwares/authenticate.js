@@ -1,75 +1,86 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { User } = require('../db/models/user');
+const userInterface = require('../db/interfaces/userInterface');
 
-let findByCredentials = async (username,password) => {
+let handleLogIn = async (req, res, next) => {
     try{
-        let user = await User.findOne({ username });
+        let query = req.query;
+        let username = JSON.parse(query.username);
+        let password = JSON.parse(query.password);
+        let userData = await userInterface.findUserByQuery({ username }, {});
+        let user = userData.data;
 
         if (user === null){
-            return  'invalid username';
+            next( new Error("invalid username") );
         }
 
         let matched = await bcrypt.compare(password, user.password);
         if (matched) {
-            return {
-                _id: user._id
+            let access = 'auth';
+            let token = await jwt.sign({_id: user._id.toString(), access}, 'abc123').toString();
+            user.tokens.push({access,token});
+            user.save();
+            res.locals.data = {
+                data: token,
+                status: "OK"
             };
+            next();
         } else {
-            return 'incorrect password';
+            next( new Error("incorrect password") );
         }
     } catch (e) {
-        return null;
+        next(e);
     }
 };
 
-let generateAuthToken = async (_id) => {
-    try{
-        let user = await User.findOne({_id});
-        let access = 'auth';
-        let token = await jwt.sign({_id: user._id.toString(), access}, 'abc123').toString();
-
-        user.tokens.push({access,token});
-        user.save();
-
-        return token;
-    } catch (e) {
-        return null;
-    }
-}
-
-let findUserByToken = async (token) => {
+let handleAuthentication = async (req, res, next) => {
     try {
+        let token = req.header('x-auth');
         let decodedUser =  await jwt.verify(token,'abc123');
 
-        return await User.find({
-            _id: decodedUser._id
-        }, {
-            orgName:1
-        });
+        let userData = await userInterface.findUserByQuery({ _id: decodedUser._id }, { orgName:1 });
+        let user = userData.data;
+        if (user){
+            res.locals.data = {
+                data: user,
+                status: "OK"
+            };
+        } else {
+            res.locals.data = {
+                data: null,
+                status: "ERROR"
+            };
+        }
+        next();
     } catch (e) {
-        return null;
+        next(e);
     }
 };
 
-let removeToken = async(token) => {
+let handleLogOut = async (req, res, next) => {
     try {
+        let token = req.header('x-auth');
         let decodedUser =  await jwt.verify(token,'abc123');
-        console.log(decodedUser)
-        return await User.findByIdAndUpdate(decodedUser._id,{
+
+        await userInterface.findUserByIdAndUpdate(decodedUser._id,{
             $pull: {
                 tokens: { token }
             }
         });
+
+        res.locals.data = {
+            data: "Logged Out",
+            status: "OK"
+        };
+        next();
     } catch (e) {
-        return null;
+        next(e);
     }
 };
 
 module.exports = {
-    findByCredentials,
-    generateAuthToken,
-    findUserByToken,
-    removeToken
+    handleLogIn,
+    handleAuthentication,
+    handleLogOut
 }
