@@ -3,28 +3,7 @@ const router = express.Router();
 
 const activityController = require('./../controllers/activityController.js');
 const organizationController = require('./../controllers/organizationController.js');
-
-router.get('/', function(req, res, next) {
-    try {
-        return res.status(200).send({
-            status: 'OK',
-            route: '/api'
-        });
-    } catch (e) {
-        return res.sendStatus(400);
-    }
-});
-
-router.get('/test', async function (req, res) {
-    try {
-        return res.status(200).send({
-            status: 'OK',
-            route: '/api/test'
-        });
-    } catch (e) {
-        return res.sendStatus(400);
-    }
-});
+const authenticate = require('./../middlwares/authenticate.js');
 
 router.get('/pins', activityController.handleGETPins);
 
@@ -37,5 +16,7 @@ router.get('/orgdetails', organizationController.handleGETOrganizationDetails);
 router.post('/activity', activityController.handlePOSTActivity);
 
 router.post('/register', organizationController.handlePOSTRegister);
+
+router.post('/login', authenticate.handlePOSTLogIn);
 
 module.exports = router;

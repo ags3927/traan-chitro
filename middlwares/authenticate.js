@@ -3,11 +3,11 @@ const jwt = require('jsonwebtoken');
 
 const userInterface = require('../db/interfaces/userInterface');
 
-let handleLogIn = async (req, res, next) => {
+let handlePOSTLogIn = async (req, res, next) => {
     try{
-        let query = req.query;
-        let username = JSON.parse(query.username);
-        let password = JSON.parse(query.password);
+        let body = req.body;
+        let username = body.username;
+        let password = body.password;
         let userData = await userInterface.findUserByQuery({ username }, {});
         let user = userData.data;
 
@@ -80,7 +80,7 @@ let handleLogOut = async (req, res, next) => {
 };
 
 module.exports = {
-    handleLogIn,
+    handlePOSTLogIn,
     handleAuthentication,
     handleLogOut
 }
