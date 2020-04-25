@@ -25,7 +25,7 @@ const handleGETPins = async (req, res) => {
             result = await activityInterface.findActivitiesByBoundsAndFiltersUnprivileged(bounds, filter);
         }
         return res.status(200).send({
-            locations: result
+            locations: result.data
         });
     } catch (e) {
         console.log(e.message);
@@ -57,12 +57,12 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersUnprivileged(location, filter);
         }
         return res.status(200).send({
-            activities: result
+            activities: result.data
         });
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
-            message: "ERROR in GET /api/pins\\Could not get activities",
+            message: "ERROR in GET /api/activities\\Could not get activities",
             error: e.message
         });
     }
