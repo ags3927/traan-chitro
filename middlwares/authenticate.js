@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const userInterface = require('../db/interfaces/userInterface');
 
-let handlePOSTLogIn = async (req, res, next) => {
+let handlePOSTLogIn = async (req, res) => {
     try{
         let body = req.body;
         let username = body.username;
@@ -12,25 +12,30 @@ let handlePOSTLogIn = async (req, res, next) => {
         let user = userData.data;
 
         if (user === null){
-            next( new Error("invalid username") );
+            res.status(500).send({
+                message: "User does not exist"
+            })
         }
 
         let matched = await bcrypt.compare(password, user.password);
+
         if (matched) {
             let access = 'auth';
             let token = await jwt.sign({_id: user._id.toString(), access}, 'abc123').toString();
             user.tokens.push({access,token});
             user.save();
-            res.locals.data = {
-                data: token,
-                status: "OK"
-            };
-            next();
+
+            res.status(200).send({token});
         } else {
-            next( new Error("incorrect password") );
+            res.status(500).send({
+                message: "Incorrect password"
+            })
         }
     } catch (e) {
-        next(e);
+        res.status(500).send({
+            message: "ERROR in POST /api/login\\Could not login",
+            error: e.message
+        });
     }
 };
 
