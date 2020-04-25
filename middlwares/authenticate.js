@@ -48,7 +48,7 @@ let handleAuthentication = async (req, res, next) => {
         let user = userData.data;
         if (user){
             res.locals.data = {
-                data: user,
+                user,
                 status: "OK"
             };
         } else {

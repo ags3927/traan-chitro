@@ -74,7 +74,7 @@ const handlePOSTActivity = async (req, res) => {
         let result;
         if (true) {
             let data = {
-                orgName: body.orgName,
+                orgName: res.locals.data.user.orgName,
                 typeOfRelief: body.typeOfRelief,
                 location: body.location,
                 contents: [],
