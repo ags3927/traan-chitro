@@ -4,33 +4,53 @@ const organizationInterface = require('./organizationInterface');
 let insertUser = async (userObject) => {
     try {
         let user = new User(userObject);
-        return await user.save();
+        let data = await user.save();
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let insertUsers = async (userObjectArray) => {
     try {
-        return await User.create(userObjectArray);
+        let data = await User.create(userObjectArray);
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        console.log(e.message)
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let deleteUser = async (orgName) => {
     try {
         await organizationInterface.deleteOrganization(orgName);
-        return await User.findOneAndDelete({ orgName });
+        let data = await User.findOneAndDelete({ orgName });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
 let editUser = async (orgName, userObject) => {
     try {
-        return await User.findOneAndUpdate( { orgName },
+        let data = await User.findOneAndUpdate( { orgName },
             {
                 $set:
                     {
@@ -43,14 +63,21 @@ let editUser = async (orgName, userObject) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
-let updateUserByOrgName = async (prevOrgName, updatedOrgName) => {
+let updateUserByOrganizationName = async (prevOrgName, updatedOrgName) => {
     try {
-        return await User.findOneAndUpdate( { orgName: prevOrgName },
+        let data = await User.findOneAndUpdate( { orgName: prevOrgName },
             {
                 $set:
                     {
@@ -60,8 +87,15 @@ let updateUserByOrgName = async (prevOrgName, updatedOrgName) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
     } catch (e) {
-        return null;
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
     }
 };
 
@@ -70,7 +104,7 @@ module.exports = {
     insertUsers,
     deleteUser,
     editUser,
-    updateUserByOrgName
+    updateUserByOrganizationName
 }
 
 

@@ -27,7 +27,7 @@ const setWithExpiration = (key, val, expirationTimeInSeconds) => {
     try {
         cache.set(key, val, expirationTimeInSeconds);
     } catch (err) {
-        status = "Error";
+        status = "ERROR";
     }
 
     return { status };
