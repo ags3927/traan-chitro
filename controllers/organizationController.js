@@ -35,7 +35,7 @@ const handleGETOrganizationDetails = async (req, res) => {
         let orgName = JSON.parse(query.orgName);
 
         let result;
-        let privileged =  (res.locals.data.status === 'OK');
+        //let privileged =  (res.locals.data.status === 'OK');
 
         if (true) {
             result = await organizationRepository.findOrganizationDetailsPrivileged(orgName);
