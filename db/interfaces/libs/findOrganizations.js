@@ -11,7 +11,8 @@ const findOrganizationByName = async (orgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -26,7 +27,8 @@ const findAllOrganizations = async () => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: [],
             status: "ERROR"
         };
     }
@@ -44,7 +46,8 @@ const findAllOrganizationNames = async () => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: [],
             status: "ERROR"
         };
     }

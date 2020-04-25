@@ -9,7 +9,8 @@ let findUserByQuery = async (query,option) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -24,7 +25,8 @@ let findUserByIdAndUpdate = async (id,update) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }

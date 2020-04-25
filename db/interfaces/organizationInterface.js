@@ -17,7 +17,8 @@ let insertOrganization = async (orgObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -33,7 +34,8 @@ const deleteOrganization = async (orgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -67,7 +69,8 @@ const editOrganization = async (orgName, orgObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }

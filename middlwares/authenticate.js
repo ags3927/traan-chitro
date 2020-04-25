@@ -47,13 +47,13 @@ let handleAuthentication = async (req, res, next) => {
         let userData = await userInterface.findUserByQuery({ _id: decodedUser._id }, { orgName:1 });
         let user = userData.data;
         if (user){
-            res.locals.data = {
+            res.locals.middlewareResponse = {
                 user,
+                token,
                 status: "OK"
             };
         } else {
-            res.locals.data = {
-                data: null,
+            res.locals.middlewareResponse = {
                 status: "ERROR"
             };
         }
@@ -63,29 +63,29 @@ let handleAuthentication = async (req, res, next) => {
     }
 };
 
-let handleLogOut = async (req, res, next) => {
+let handlePOSTLogOut = async (req, res) => {
     try {
-        let token = req.header('x-auth');
-        let decodedUser =  await jwt.verify(token,'abc123');
-
-        await userInterface.findUserByIdAndUpdate(decodedUser._id,{
+        let user = res.locals.middlewareResponse.user;
+        let token = res.locals.middlewareResponse.token;
+        await userInterface.findUserByIdAndUpdate(user._id,{
             $pull: {
                 tokens: { token }
             }
         });
 
-        res.locals.data = {
-            data: "Logged Out",
-            status: "OK"
-        };
-        next();
+        res.status(200).send({
+            message: "Successfully Logged Out"
+        });
     } catch (e) {
-        next(e);
+        res.status(500).send({
+            message: "ERROR in POST /api/logout\\Could not logout",
+            error: e.message
+        });
     }
 };
 
 module.exports = {
     handlePOSTLogIn,
     handleAuthentication,
-    handleLogOut
+    handlePOSTLogOut
 }

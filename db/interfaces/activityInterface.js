@@ -20,7 +20,8 @@ let insertActivity = async (activityObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -35,7 +36,8 @@ let insertActivities = async (activityObjectArray) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -50,7 +52,8 @@ let deleteActivity = async (id) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -65,7 +68,8 @@ let deleteActivities = async (orgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -92,7 +96,8 @@ let editActivity = async (id, activityObject) => {
         };
     } catch (e) {
         return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -119,33 +124,8 @@ let editActivities = async (prevOrgName, updatedOrgName) => {
         };
     } catch (e) {
         return {
-            data: e.message,
-            status: "ERROR"
-        };
-    }
-};
-
-let createActivityAndInsert = async (activitiesData) => {
-    try {
-        let activityObjectArray = [];
-        activitiesData.typeOfRelief.forEach((element) => {
-            activityObjectArray.push({
-                orgName: activitiesData.orgName,
-                typeOfRelief: element,
-                location: {
-                    type: "Point",
-                    coordinates: [activitiesData.location.lng, activitiesData.location.lat]
-                },
-                supplyDate: activitiesData.supplyDate,
-                contents: activitiesData.contents
-            });
-        });
-
-         return await insertActivities(activityObjectArray);
-
-    } catch (e) {
-        return {
-            data: e.message,
+            message: e.message,
+            data: null,
             status: "ERROR"
         };
     }
@@ -158,7 +138,6 @@ module.exports = {
     deleteActivities,
     editActivity,
     editActivities,
-    createActivityAndInsert,
     findActivitiesByBoundsAndFiltersPrivileged,
     findActivitiesByBoundsAndFiltersUnprivileged,
     findActivitiesByCoordinatesAndFiltersUnprivileged,

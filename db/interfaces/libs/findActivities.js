@@ -60,7 +60,7 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
         if (filter.schedule === "PAST") {
             return await findActivitiesByBoundsByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $lte: moment().valueOf() } },
                 {
                     location: {
@@ -72,7 +72,7 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
         } else if(filter.schedule === "SCHEDULED") {
             return await findActivitiesByBoundsByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $gt: moment().valueOf() } },
                 {
                     location: {
@@ -84,7 +84,7 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
         } else {
             return await findActivitiesByBoundsByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 {},
                 {
                     location: {
@@ -104,7 +104,7 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
         if (filter.schedule === "PAST") {
             return await findActivitiesByBoundsByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $lte: moment().valueOf() } },
                 {
                     location: {
@@ -116,7 +116,7 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
         } else if(filter.schedule === "SCHEDULED"){
             return await findActivitiesByBoundsByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $gt: moment().valueOf() } },
                 {
                     location: {
@@ -128,7 +128,7 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
         } else {
             return await findActivitiesByBoundsByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 {},
                 {
                     location: {
@@ -157,6 +157,7 @@ let findActivitiesByBoundsAndFiltersPrivileged = async (bounds, filter) => {
 
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };
@@ -167,12 +168,12 @@ let resolveFilterByBoundsWithoutOrganizationUnprivileged = async (bounds, filter
     try {
         return await findActivitiesByBoundsByQuery(
             {},
-            { typeOfRelief: { $in: filter.typeOfRelief } },
+            { typeOfRelief: { $all: filter.typeOfRelief } },
             {},
             {
                 location: {
                     $geoWithin: {
-                        $box: [ [bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat] ],
+                        $box: [[bounds.southwest.lng, bounds.southwest.lat], [bounds.northeast.lng, bounds.northeast.lat]],
                     }
                 }
             });
@@ -185,7 +186,7 @@ let resolveFilterByBoundsWithOrganizationUnprivileged = async (bounds, filter) =
     try {
         return await findActivitiesByBoundsByQuery(
             { orgName: filter.orgName },
-            { typeOfRelief: { $in: filter.typeOfRelief } },
+            { typeOfRelief: { $all: filter.typeOfRelief } },
             {},
             {
                 location: {
@@ -213,6 +214,7 @@ let findActivitiesByBoundsAndFiltersUnprivileged = async (bounds, filter) => {
 
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };
@@ -224,21 +226,21 @@ let resolveFilterByCoordinatesWithoutOrganizationPrivileged = async (location, f
         if (filter.schedule === "PAST") {
             return await findActivitiesByCoordinatesByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $lte: moment().valueOf() } },
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
         } else if(filter.schedule === "SCHEDULED") {
             return await findActivitiesByCoordinatesByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $gt: moment().valueOf() } },
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
         } else {
             return await findActivitiesByCoordinatesByQuery(
                 {},
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 {},
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
@@ -253,21 +255,21 @@ let resolveFilterByCoordinatesWithOrganizationPrivileged = async (location, filt
         if (filter.schedule === "PAST") {
             return await findActivitiesByCoordinatesByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $lte: moment().valueOf() } },
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
         } else if(filter.schedule === "SCHEDULED"){
             return await findActivitiesByCoordinatesByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 { supplyDate: { $gt: moment().valueOf() } },
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
         } else {
             return await findActivitiesByCoordinatesByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $in: filter.typeOfRelief } },
+                { typeOfRelief: { $all: filter.typeOfRelief } },
                 {},
                 { "location.coordinates": [location.lng, location.lat] },
                 { redundant: 0, "location.type": 0 });
@@ -290,6 +292,7 @@ let findActivitiesByCoordinatesAndFiltersPrivileged = async (location, filter) =
 
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };
@@ -300,7 +303,7 @@ let resolveFilterByCoordinatesWithoutOrganizationUnprivileged = async (location,
     try {
         return await findActivitiesByCoordinatesByQuery(
             {},
-            { typeOfRelief: { $in: filter.typeOfRelief } },
+            { typeOfRelief: { $all: filter.typeOfRelief } },
             {},
             { "location.coordinates": [location.lng, location.lat] },
             { redundant: 0, "location.type": 0, supplyDate: 0, contents: 0 });
@@ -313,7 +316,7 @@ let resolveFilterByCoordinatesWithOrganizationUnprivileged = async (location, fi
     try {
         return await findActivitiesByCoordinatesByQuery(
             { orgName: filter.orgName },
-            { typeOfRelief: { $in: filter.typeOfRelief } },
+            { typeOfRelief: { $all: filter.typeOfRelief } },
             {},
             { "location.coordinates": [location.lng, location.lat] },
             { redundant: 0, "location.type": 0, supplyDate: 0, contents: 0 });
@@ -334,6 +337,7 @@ let findActivitiesByCoordinatesAndFiltersUnprivileged = async (location, filter)
         }
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };
@@ -354,6 +358,7 @@ let findActivitiesByOrganizationPrivileged = async (orgName) => {
         };
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };
@@ -376,6 +381,7 @@ let findActivitiesByOrganizationUnprivileged = async (orgName) => {
         };
     } catch (e) {
         return {
+            message: e.message,
             data: [],
             status: "ERROR"
         };

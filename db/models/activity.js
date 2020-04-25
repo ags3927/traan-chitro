@@ -25,11 +25,11 @@ const activitySchema = new Schema({
         minlength: 1,
         trim: true
     },
-    typeOfRelief: {
+    typeOfRelief: [{
         type: String,
         enum: ['FOOD','PPE','SANITIZER','MASK','GLOVE'],
         required: true
-    },
+    }],
     location: {
         type: {
             type: String,
@@ -46,19 +46,18 @@ const activitySchema = new Schema({
         type: Date,
         required: true
     },
-    contents: [{
+    contents: {
         type: String,
         trim: true,
         minlength: 1
-    }],
+    },
     redundant: {
         type: Boolean,
         default: false
     }
 });
 
-
-activitySchema.indexes({location: '2dsphere'});
+activitySchema.index({ location: '2dsphere' }, { unique: false });
 
 const Activity = mongoose.model('Activity', activitySchema);
 

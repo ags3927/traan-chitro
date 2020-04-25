@@ -20,7 +20,6 @@ const organizationSchema = new Schema({
     orgName: {
         type: String,
         unique: true,
-        index: 0,
         required: true,
         minlength: 1,
         trim: true
