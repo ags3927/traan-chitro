@@ -125,6 +125,32 @@ let editActivities = async (prevOrgName, updatedOrgName) => {
     }
 };
 
+let createActivityAndInsert = async (activitiesData) => {
+    try {
+        let activityObjectArray = [];
+        activitiesData.typeOfRelief.forEach((element) => {
+            activityObjectArray.push({
+                orgName: activitiesData.orgName,
+                typeOfRelief: element,
+                location: {
+                    type: "Point",
+                    coordinates: [activitiesData.location.lng,activitiesData.location.lat]
+                },
+                supplyDate: activitiesData.supplyDate,
+                contents: activitiesData.contents
+            });
+        });
+
+         return await insertActivities(activityObjectArray);
+
+    } catch (e) {
+        return {
+            data: e.message,
+            status: "ERROR"
+        };
+    }
+};
+
 module.exports = {
     insertActivity,
     insertActivities,
@@ -132,6 +158,7 @@ module.exports = {
     deleteActivities,
     editActivity,
     editActivities,
+    createActivityAndInsert,
     findActivitiesByBoundsAndFiltersPrivileged,
     findActivitiesByBoundsAndFiltersUnprivileged,
     findActivitiesByCoordinatesAndFiltersUnprivileged,
