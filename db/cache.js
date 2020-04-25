@@ -30,7 +30,7 @@ const setWithExpiration = (key, val, expirationTimeInSeconds) => {
         status = "ERROR";
     }
 
-    return { status };
+    return {status};
 };
 
 const set = (key, val) => setWithExpiration(key, val, 0); // 0 means unlimited expiration in node-cache
