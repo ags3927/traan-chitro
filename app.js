@@ -41,6 +41,7 @@ app.use('/', indexRouter);
 
 //API ROUTES
 app.use('/api', apiRouter);
+app.use('/api/login', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
