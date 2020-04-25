@@ -33,18 +33,32 @@ const findOrganizationDetailsUnprivileged = async (orgName) => {
 };
 
 const findOrganizationDetailsPrivileged = async (orgName) => {
-    const cacheResult = cache.get(orgName + 'PRIVILEGED');
-    if (cacheResult.found) {
-        return cacheResult.data;
-    } else {
-        let org = await organizationInterface.findOrganizationByName(orgName);
-        let activitiesArray = await activityInterface.findActivitiesByOrganizationPrivileged(orgName);
-        let orgDetails = {
-            organization: org,
-            activities: activitiesArray
-        };
-        cache.setWithExpiration(orgName + 'PRIVILEGED', orgDetails, 30 * 60); // 30 minute expiration period
-        return orgDetails;
+    try {
+        const cacheResult = cache.get(orgName + 'PRIVILEGED');
+        if (cacheResult.found) {
+            return {
+                status: 'OK',
+                data: cacheResult.data
+            };
+        } else {
+            let org = await organizationInterface.findOrganizationByName(orgName);
+            let activitiesArray = await activityInterface.findActivitiesByOrganizationPrivileged(orgName);
+            let orgDetails = {
+                organization: org,
+                activities: activitiesArray
+            };
+            cache.setWithExpiration(orgName + 'PRIVILEGED', orgDetails, 30 * 60); // 30 minute expiration period
+            return {
+                status: 'OK',
+                data: orgDetails
+            };
+        }
+    } catch (e) {
+        console.log(e.message);
+        return {
+            status: 'ERROR',
+            data: null
+        }
     }
 };
 
