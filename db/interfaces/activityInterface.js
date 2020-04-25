@@ -58,7 +58,7 @@ let deleteActivity = async (id) => {
 
 let deleteActivities = async (orgName) => {
     try {
-        let data = await Activity.deleteMany({ orgName: orgName });
+        let data = await Activity.deleteMany({orgName});
         return {
             data,
             status: "OK"
@@ -134,7 +134,7 @@ let createActivityAndInsert = async (activitiesData) => {
                 typeOfRelief: element,
                 location: {
                     type: "Point",
-                    coordinates: [activitiesData.location.lng,activitiesData.location.lat]
+                    coordinates: [activitiesData.location.lng, activitiesData.location.lat]
                 },
                 supplyDate: activitiesData.supplyDate,
                 contents: activitiesData.contents

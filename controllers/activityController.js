@@ -69,15 +69,16 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
 
 const handlePOSTActivity = async (req, res) => {
     try {
-        let query = req.query;
+        let body = req.body;
         //let privileged =  (res.locals.data.status === 'OK');
         let result;
         if (true) {
             let data = {
-                orgName: query.orgName,
-                typeOfRelief: JSON.parse(query.typeOfRelief),
-                location: JSON.parse(query.location),
-                supplyDate: new Date(query.supplyDate)
+                orgName: body.orgName,
+                typeOfRelief: body.typeOfRelief,
+                location: body.location,
+                contents: [],
+                supplyDate: new Date(body.supplyDate)
             };
             result = await activityInterface.createActivityAndInsert(data);
         }
