@@ -1,6 +1,11 @@
 const { User } = require('../models/user');
 const organizationInterface = require('./organizationInterface');
 
+let {
+    findUserByIdAndUpdate,
+    findUserByQuery
+} = require('./libs/findUsers');
+
 let insertUser = async (userObject) => {
     try {
         let user = new User(userObject);
@@ -104,7 +109,9 @@ module.exports = {
     insertUsers,
     deleteUser,
     editUser,
-    updateUserByOrganizationName
+    updateUserByOrganizationName,
+    findUserByIdAndUpdate,
+    findUserByQuery
 }
 
 
