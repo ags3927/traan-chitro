@@ -21,7 +21,7 @@ let handlePOSTLogIn = async (req, res) => {
 
         if (matched) {
             let access = 'auth';
-            let token = await jwt.sign({_id: user._id.toString(), access}, 'abc123').toString();
+            let token = await jwt.sign({_id: user._id.toString(), access}, 'lekhaporaputkirmoddhebhoiradimu').toString();
             user.tokens.push({access,token});
             user.save();
 
@@ -42,7 +42,7 @@ let handlePOSTLogIn = async (req, res) => {
 let handleAuthentication = async (req, res, next) => {
     try {
         let token = req.header('x-auth');
-        let decodedUser =  await jwt.verify(token,'abc123');
+        let decodedUser =  await jwt.verify(token,'lekhaporaputkirmoddhebhoiradimu');
 
         let userData = await userInterface.findUserByQuery({ _id: decodedUser._id }, { orgName:1 });
         let user = userData.data;
@@ -59,7 +59,10 @@ let handleAuthentication = async (req, res, next) => {
         }
         next();
     } catch (e) {
-        next(e);
+        res.locals.middlewareResponse = {
+            status: "ERROR"
+        };
+        next();
     }
 };
 

@@ -53,7 +53,7 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
         let filter = JSON.parse(query.filter);
 
         let result;
-        let privileged =  (res.locals.middlewareResponse.status === 'OK');
+        let privileged = (res.locals.middlewareResponse.status === 'OK');
 
         if (privileged) {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersPrivileged(location, filter);
