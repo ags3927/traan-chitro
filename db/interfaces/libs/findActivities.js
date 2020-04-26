@@ -7,6 +7,7 @@ const reliefTypes = ["FOOD", "PPE", "MASK", "SANITIZER", "GLOVE"];
 
 let findActivitiesByBoundsByQuery = async (queryOrgName,queryTypeOfRelief,querySchedule,queryLocation) => {
     try {
+        console.log("HELLO FIRST");
         let locations = await Activity.find({
             $and: [
                 queryOrgName,
@@ -27,7 +28,7 @@ let findActivitiesByBoundsByQuery = async (queryOrgName,queryTypeOfRelief,queryS
         });
 
         let data = Array.from(new Set(coordinatesArray.map(JSON.stringify))).map(JSON.parse);
-        //console.log(data);
+        console.log("HELLO");
         return {
             data,
             status: "OK"
@@ -69,9 +70,9 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
 
         if (filter.schedule === "PAST") {
             return await findActivitiesByBoundsByQuery(
-                {}, {
-                    filterQuery
-                }, {
+                {},
+                {filterQuery}
+                , {
                     supplyDate: {
                         $lte: moment().valueOf()
                     }
@@ -85,9 +86,7 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
         } else if(filter.schedule === "SCHEDULED") {
             return await findActivitiesByBoundsByQuery(
                 {}, {
-                    typeOfRelief: {
-                        $all: filter.typeOfRelief
-                    }
+                    filterQuery
                 }, {
                     supplyDate: {
                         $gt: moment().valueOf()
@@ -103,7 +102,7 @@ let resolveFilterByBoundsWithoutOrganizationPrivileged = async (bounds, filter) 
         } else {
             return await findActivitiesByBoundsByQuery(
                 {},
-                { typeOfRelief: { $all: filter.typeOfRelief } },
+                {filterQuery},
                 {},
                 {
                     location: {
@@ -145,7 +144,7 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
         } else if(filter.schedule === "SCHEDULED"){
             return await findActivitiesByBoundsByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $all: filter.typeOfRelief } },
+                {filterQuery},
                 { supplyDate: { $gt: moment().valueOf() } },
                 {
                     location: {
@@ -157,7 +156,7 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
         } else {
             return await findActivitiesByBoundsByQuery(
                 { orgName: filter.orgName },
-                { typeOfRelief: { $all: filter.typeOfRelief } },
+                {filterQuery},
                 {},
                 {
                     location: {
@@ -203,7 +202,7 @@ let resolveFilterByBoundsWithoutOrganizationUnprivileged = async (bounds, filter
 
         return await findActivitiesByBoundsByQuery(
             {},
-            filterQuery,
+            {filterQuery},
             {},
             {
                 location: {
