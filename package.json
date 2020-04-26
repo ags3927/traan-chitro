@@ -6,7 +6,7 @@
     "start": "node bin/www"
   },
   "engines": {
-    "node": "12.16.1"
+    "node": "12.x.x"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
