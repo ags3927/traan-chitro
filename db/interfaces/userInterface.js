@@ -1,11 +1,6 @@
 const { User } = require('../models/user');
 const organizationInterface = require('./organizationInterface');
 
-let {
-    findUserByIdAndUpdate,
-    findUserByQuery
-} = require('./libs/findUsers');
-
 let insertUser = async (userObject) => {
     try {
         let user = new User(userObject);
@@ -67,7 +62,7 @@ let editUser = async (orgName, userObject) => {
                         orgName: userObject.orgName,
                         tokens: []
                     }
-                },
+            },
             {
                 runValidators: true
             });
@@ -96,6 +91,38 @@ let updateUserByOrganizationName = async (prevOrgName, updatedOrgName) => {
             {
                 runValidators: true
             });
+        return {
+            data,
+            status: "OK"
+        };
+    } catch (e) {
+        return {
+            message: e.message,
+            data: null,
+            status: "ERROR"
+        };
+    }
+};
+
+let findUserByQuery = async (query,option) => {
+    try {
+        let data = await User.findOne(query,option);
+        return {
+            data,
+            status: "OK"
+        };
+    } catch (e) {
+        return {
+            message: e.message,
+            data: null,
+            status: "ERROR"
+        };
+    }
+};
+
+let findUserByIdAndUpdate = async (id,update) => {
+    try {
+        let data = await User.findByIdAndUpdate(id,update);
         return {
             data,
             status: "OK"
