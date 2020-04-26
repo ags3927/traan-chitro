@@ -5,13 +5,13 @@ const {isEmail} = require('validator');
 const Schema = mongoose.Schema;
 
 let validateURL = (url) => {
-    if (!urlRegex({exact: true}).test(url)){
+    if (!urlRegex({exact: true}).test(url)) {
         throw new mongoose.Error('Invalid url');
     }
 }
 
 let validateEmail = (email) => {
-    if (!isEmail(email)){
+    if (!isEmail(email)) {
         throw new mongoose.Error('Invalid email');
     }
 }
@@ -34,7 +34,7 @@ const organizationSchema = new Schema({
             type: String,
             required: true,
             minlength: 14,
-            maxlength:14
+            maxlength: 14
         },
         email: {
             type: String,
