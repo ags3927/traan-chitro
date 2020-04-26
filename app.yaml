@@ -3,7 +3,7 @@ runtime: nodejs12
 
 
 env_variables:
-  MONGODB_URI: "mongodb+srv://tran-chitro:hThzeWrOYpfLKF6s@tranchitro-yyxz5.gcp.mongodb.net/tran-chitro?retryWrites=true&w=majority"
+  MONGODB_URI: "mongodb+srv://tran-chitro:bhallagenamarajabo113141@tranchitro-yyxz5.gcp.mongodb.net/tran-chitro?retryWrites=true&w=majority"
   VUE_APP_API_KEY : "AIzaSyBdudQyn0ECon1ggxM-i3t4xhbQTVYAgLA"
 
 handlers:
