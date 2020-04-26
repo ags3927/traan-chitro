@@ -145,10 +145,6 @@ let resolveFilterByBoundsWithOrganizationPrivileged = async (bounds, filter) => 
 
 let findActivitiesByBoundsAndFiltersPrivileged = async (bounds, filter) => {
     try {
-        if (filter.typeOfRelief.length === 0) {
-            filter.typeOfRelief = reliefTypes;
-        }
-
         if (filter.orgName === null) {
             return await resolveFilterByBoundsWithoutOrganizationPrivileged(bounds, filter);
         } else {
@@ -202,10 +198,6 @@ let resolveFilterByBoundsWithOrganizationUnprivileged = async (bounds, filter) =
 
 let findActivitiesByBoundsAndFiltersUnprivileged = async (bounds, filter) => {
     try {
-        if (filter.typeOfRelief.length === 0) {
-            filter.typeOfRelief = reliefTypes;
-        }
-
         if (filter.orgName === null) {
             return await resolveFilterByBoundsWithoutOrganizationUnprivileged(bounds, filter);
         } else {
@@ -281,9 +273,6 @@ let resolveFilterByCoordinatesWithOrganizationPrivileged = async (location, filt
 
 let findActivitiesByCoordinatesAndFiltersPrivileged = async (location, filter) => {
     try {
-        if (filter.typeOfRelief.length === 0) {
-            filter.typeOfRelief = reliefTypes;
-        }
         if (filter.orgName === null) {
             return await resolveFilterByCoordinatesWithoutOrganizationPrivileged(location, filter);
         } else {
@@ -327,9 +316,6 @@ let resolveFilterByCoordinatesWithOrganizationUnprivileged = async (location, fi
 
 let findActivitiesByCoordinatesAndFiltersUnprivileged = async (location, filter) => {
     try {
-        if (filter.typeOfRelief.length === 0) {
-            filter.typeOfRelief = reliefTypes;
-        }
         if (filter.orgName === null) {
             return await resolveFilterByCoordinatesWithoutOrganizationUnprivileged(location, filter);
         } else {
