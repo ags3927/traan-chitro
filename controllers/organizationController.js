@@ -42,7 +42,13 @@ const handleGETOrganizationDetails = async (req, res) => {
         } else {
             result = await organizationRepository.findOrganizationDetailsUnprivileged(orgName);
         }
-        return res.status(200).send(result.data);
+        if (result.status === 'OK') {
+            res.status(200).send(result.data);
+        } else {
+            res.status(500).send({
+                message: 'Could not find organization names'
+            });
+        }
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
@@ -55,24 +61,9 @@ const handleGETOrganizationDetails = async (req, res) => {
 const handlePOSTRegister = async (req, res) => {
     try {
         let body = req.body;
-        let data = {
-            orgName: body.orgName,
-            description: body.description,
-            contact: {
-                phone: body.phone
-            }
-        }
-        if (body.email !== null) {
-            data.contact.email = body.email;
-        }
-        if (body.facebook !== null) {
-            data.contact.facebook = body.facebook;
-        }
-        if (body.website !== null) {
-            data.contact.website = body.website;
-        }
 
-        let result = await toBeRegisteredOrganizationInterface.insertToBeRegisteredOrganization(data);
+        let result = await toBeRegisteredOrganizationInterface.
+                                insertToBeRegisteredOrganization(buildOrganizationObject(body));
 
         if (result.status === "OK") {
             res.status(200).send({
@@ -91,10 +82,72 @@ const handlePOSTRegister = async (req, res) => {
             error: e.message
         });
     }
+};
+
+
+const buildOrganizationObject = (body) => {
+    let data = {
+        orgName: body.orgName,
+        description: body.description,
+        contact: {
+            phone: body.phone
+        }
+    }
+    if (body.email !== null) {
+        data.contact.email = body.email;
+    }
+    if (body.facebook !== null) {
+        data.contact.facebook = body.facebook;
+    }
+    if (body.website !== null) {
+        data.contact.website = body.website;
+    }
+    return data;
 }
+
+
+const handlePATCHOrganizationDetails = async (req, res) => {
+    try{
+        let body = req.body;
+        let data = buildOrganizationObject(body);
+
+        let privileged =  (res.locals.middlewareResponse.status === 'OK');
+
+        if (privileged && data.orgName === res.locals.middlewareResponse.user.orgName) {
+
+            console.log(data);
+
+            let result = await organizationInterface.editOrganization(
+                res.locals.middlewareResponse.user.orgName, data);
+
+            console.log(result);
+
+            if (result.status === 'OK') {
+                res.status(200).send({
+                    message: 'Organization details updated successfully'
+                });
+            } else {
+                res.status(500).send({
+                    message: 'Could not update organization details'
+                });
+            }
+        } else {
+            res.status(500).send({
+                message: 'User not authenticated to edit this profile'
+            });
+        }
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send({
+            message: 'ERROR in GET /api/register\\Could not get register!',
+            error: e.message
+        });
+    }
+};
 
 module.exports = {
     handleGETOrganizationNames,
     handleGETOrganizationDetails,
-    handlePOSTRegister
+    handlePOSTRegister,
+    handlePATCHOrganizationDetails
 };
