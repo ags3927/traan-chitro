@@ -13,17 +13,23 @@ const handleGETPins = async (req, res) => {
         let bounds = JSON.parse(query.bounds);
         let filter = JSON.parse(query.filter);
 
-        //let privileged = (res.locals.data.status === 'OK');
+        let privileged = (res.locals.middlewareResponse.status === 'OK');
         let result;
 
-        if (true) {
+        if (privileged) {
             result = await activityInterface.findActivitiesByBoundsAndFiltersPrivileged(bounds, filter);
         } else {
             result = await activityInterface.findActivitiesByBoundsAndFiltersUnprivileged(bounds, filter);
         }
-        return res.status(200).send({
-            locations: result.data
-        });
+        if (result.status === 'OK') {
+            res.status(200).send({
+                locations: result.data
+            });
+        } else {
+            res.status(500).send({
+                message: 'Could not get pins'
+            });
+        }
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
@@ -47,19 +53,27 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
         let filter = JSON.parse(query.filter);
 
         let result;
-        //let privileged =  (res.locals.data.status === 'OK');
+        let privileged = (res.locals.middlewareResponse.status === 'OK');
 
-        if (true) {
+        if (privileged) {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersPrivileged(location, filter);
         } else {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersUnprivileged(location, filter);
         }
-        return res.status(200).send({
-            activities: result.data
-        });
+
+        if (result.status === 'OK') {
+            res.status(200).send({
+                activities: result.data
+            });
+        } else {
+            res.status(500).send({
+                message: 'Could not get activities'
+            });
+        }
+
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send({
+        res.status(500).send({
             message: "ERROR in GET /api/activities\\Could not get activities",
             error: e.message
         });
@@ -70,29 +84,43 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
 const handlePOSTActivity = async (req, res) => {
     try {
         let body = req.body;
-        //let privileged =  (res.locals.data.status === 'OK');
-        let result;
-        if (true) {
+        let privileged =  (res.locals.middlewareResponse.status === 'OK');
+
+        if (privileged) {
+
             let data = {
-                orgName: res.locals.data.user.orgName,
+                orgName: res.locals.middlewareResponse.user.orgName,
                 typeOfRelief: body.typeOfRelief,
-                location: body.location,
-                contents: [],
+                location: {
+                    type: "Point",
+                    coordinates: [body.location.lng, body.location.lat]
+                },
+                contents: body.contents,
                 supplyDate: new Date(body.supplyDate)
             };
-            result = await activityInterface.createActivityAndInsert(data);
+
+            let result = await activityInterface.insertActivity(data);
+
+            if (result.status === 'OK') {
+                res.status(200).send({
+                    message: 'Successfully inserted new relief activity'
+                });
+            } else {
+                res.status(500).send({
+                    message: 'Could not insert new relief activity'
+                })
+            }
         }
         else {
-            return res.status(500).send({
-                message: "ERROR in POST /api/activity\\Could not insert activity",
-                error: "User not authenticated for this action"
+            res.status(500).send({
+                message: 'User not authenticated for this action'
             });
         }
-        res.status(200).send(result);
+
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send({
-            message: "ERROR in POST /api/activity\\Could not insert activity",
+        res.status(500).send({
+            message: 'ERROR in POST /api/activity\\Could not insert activity',
             error: e.message
         });
     }

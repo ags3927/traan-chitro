@@ -5,19 +5,28 @@ const activityInterface = require("./../interfaces/activityInterface.js");
 const cache = require("./../cache");
 
 const findAllOrganizationNames = async () => {
-    const cacheResult = cache.get("allOrganizationName");
-    if (cacheResult.found) {
+    try {
+        const cacheResult = cache.get("allOrganizationName");
+        if (cacheResult.found) {
+            return {
+                status: 'OK',
+                data: cacheResult.data
+            };
+        } else {
+            const value = await organizationInterface.findAllOrganizationNames();
+            cache.set("allOrganizationName", value.data);
+            return {
+                status: 'OK',
+                data: value.data
+            };
+        }
+    } catch (e) {
+        console.log(e.message);
         return {
-            status: 'OK',
-            data: cacheResult.data
-        };
-    } else {
-        const value = await organizationInterface.findAllOrganizationNames();
-        cache.set("allOrganizationName", value.data);
-        return {
-            status: 'OK',
-            data: value.data
-        };
+            status: 'ERROR',
+            data: [],
+            message: e.message
+        }
     }
 };
 
@@ -47,7 +56,8 @@ const findOrganizationDetailsUnprivileged = async (orgName) => {
         console.log(e.message);
         return {
             status: 'ERROR',
-            data: null
+            data: null,
+            message: e.message
         }
     }
 };
@@ -77,7 +87,8 @@ const findOrganizationDetailsPrivileged = async (orgName) => {
         console.log(e.message);
         return {
             status: 'ERROR',
-            data: null
+            data: null,
+            message: e.message
         }
     }
 };
