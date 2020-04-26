@@ -67,6 +67,9 @@ let handlePOSTLogOut = async (req, res) => {
     try {
         let user = res.locals.middlewareResponse.user;
         let token = res.locals.middlewareResponse.token;
+        console.log("TOKEN - ", token);
+        console.log(user);
+
         await userInterface.findUserByIdAndUpdate(user._id,{
             $pull: {
                 tokens: { token }

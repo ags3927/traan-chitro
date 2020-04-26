@@ -19,4 +19,6 @@ router.post('/register', organizationController.handlePOSTRegister);
 
 router.post('/login', authenticate.handlePOSTLogIn);
 
+router.post('/logout', authenticate.handleAuthentication, authenticate.handlePOSTLogOut);
+
 module.exports = router;
