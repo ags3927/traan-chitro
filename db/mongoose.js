@@ -14,4 +14,4 @@ mongoose.connect(process.env.MONGODB_URI, {
     process.exit();
 });
 
-module.exports = {mongoose} ;
+module.exports = {mongoose};

@@ -27,7 +27,7 @@ const activitySchema = new Schema({
     },
     typeOfRelief: [{
         type: String,
-        enum: ['FOOD','PPE','SANITIZER','MASK','GLOVE'],
+        enum: ['FOOD', 'PPE', 'SANITIZER', 'MASK', 'GLOVE'],
         required: true
     }],
     location: {
@@ -57,7 +57,7 @@ const activitySchema = new Schema({
     }
 });
 
-activitySchema.index({ location: '2dsphere' }, { unique: false });
+activitySchema.index({location: '2dsphere'}, {unique: false});
 
 const Activity = mongoose.model('Activity', activitySchema);
 
