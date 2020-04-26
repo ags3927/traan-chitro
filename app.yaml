@@ -1,0 +1,13 @@
+
+runtime: nodejs12
+
+
+env_variables:
+  MONGODB_URI: "mongodb+srv://arshuvo:ars123456789@tran-chitrodb-hge7d.mongodb.net/tran-chitro?retryWrites=true&w=majority"
+  VUE_APP_API_KEY : "AIzaSyBdudQyn0ECon1ggxM-i3t4xhbQTVYAgLA"
+
+handlers:
+  - url: /.*
+    secure: always
+    redirect_http_response_code: 301
+    script: auto
