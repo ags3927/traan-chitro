@@ -21,9 +21,15 @@ const handleGETPins = async (req, res) => {
         } else {
             result = await activityInterface.findActivitiesByBoundsAndFiltersUnprivileged(bounds, filter);
         }
-        return res.status(200).send({
-            locations: result.data
-        });
+        if (result.status === 'OK') {
+            res.status(200).send({
+                locations: result.data
+            });
+        } else {
+            res.status(500).send({
+                message: 'Could not get pins'
+            });
+        }
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({
@@ -54,12 +60,20 @@ const handleGETActivitiesByCoordinates = async (req, res) => {
         } else {
             result = await activityInterface.findActivitiesByCoordinatesAndFiltersUnprivileged(location, filter);
         }
-        return res.status(200).send({
-            activities: result.data
-        });
+
+        if (result.status === 'OK') {
+            res.status(200).send({
+                activities: result.data
+            });
+        } else {
+            res.status(500).send({
+                message: 'Could not get activities'
+            });
+        }
+
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send({
+        res.status(500).send({
             message: "ERROR in GET /api/activities\\Could not get activities",
             error: e.message
         });
@@ -71,8 +85,9 @@ const handlePOSTActivity = async (req, res) => {
     try {
         let body = req.body;
         let privileged =  (res.locals.middlewareResponse.status === 'OK');
-        let result;
+
         if (privileged) {
+
             let data = {
                 orgName: res.locals.middlewareResponse.user.orgName,
                 typeOfRelief: body.typeOfRelief,
@@ -83,22 +98,29 @@ const handlePOSTActivity = async (req, res) => {
                 contents: body.contents,
                 supplyDate: new Date(body.supplyDate)
             };
-            await activityInterface.insertActivity(data);
-            res.status(200).send({
-                message: 'Successfully inserted new relief activity'
-            });
+
+            let result = await activityInterface.insertActivity(data);
+
+            if (result.status === 'OK') {
+                res.status(200).send({
+                    message: 'Successfully inserted new relief activity'
+                });
+            } else {
+                res.status(500).send({
+                    message: 'Could not insert new relief activity'
+                })
+            }
         }
         else {
-            return res.status(500).send({
-                message: "ERROR in POST /api/activity\\Could not insert activity",
-                error: "User not authenticated for this action"
+            res.status(500).send({
+                message: 'User not authenticated for this action'
             });
         }
 
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send({
-            message: "ERROR in POST /api/activity\\Could not insert activity",
+        res.status(500).send({
+            message: 'ERROR in POST /api/activity\\Could not insert activity',
             error: e.message
         });
     }

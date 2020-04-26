@@ -21,4 +21,6 @@ router.post('/login', authenticate.handlePOSTLogIn);
 
 router.post('/logout', authenticate.handleAuthentication, authenticate.handlePOSTLogOut);
 
+router.patch('/orgdetails', authenticate.handleAuthentication, organizationController.handlePATCHOrganizationDetails);
+
 module.exports = router;
