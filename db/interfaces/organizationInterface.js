@@ -1,6 +1,7 @@
 const { Organization } = require("../models/organization");
 const activityInterface = require("./activityInterface");
 const userInterface = require("./userInterface");
+const _ = require("lodash");
 
 let insertOrganization = async (orgObject) => {
     try {
