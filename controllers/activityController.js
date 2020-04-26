@@ -76,11 +76,17 @@ const handlePOSTActivity = async (req, res) => {
             let data = {
                 orgName: res.locals.middlewareResponse.user.orgName,
                 typeOfRelief: body.typeOfRelief,
-                location: body.location,
+                location: {
+                    type: "Point",
+                    coordinates: [body.location.lng, body.location.lat]
+                },
                 contents: body.contents,
                 supplyDate: new Date(body.supplyDate)
             };
-            result = await activityInterface.createActivityAndInsert(data);
+            await activityInterface.insertActivity(data);
+            res.status(200).send({
+                message: 'Successfully inserted new relief activity'
+            });
         }
         else {
             return res.status(500).send({
@@ -88,7 +94,7 @@ const handlePOSTActivity = async (req, res) => {
                 error: "User not authenticated for this action"
             });
         }
-        res.status(200).send(result);
+
     } catch (e) {
         console.log(e.message);
         return res.status(500).send({

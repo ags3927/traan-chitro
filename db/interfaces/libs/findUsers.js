@@ -18,7 +18,7 @@ let findUserByQuery = async (query,option) => {
 
 let findUserByIdAndUpdate = async (id,update) => {
     try {
-        let data = User.findByIdAndUpdate(id,update);
+        let data = await User.findByIdAndUpdate(id,update);
         return {
             data,
             status: "OK"
