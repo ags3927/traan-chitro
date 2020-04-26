@@ -72,7 +72,8 @@ const handlePOSTRegister = async (req, res) => {
         } else {
             console.log(result.data);
             res.status(500).send({
-                message: 'Could not register'
+                message: 'Could not register',
+                error: result.message
             });
         }
     } catch (e) {
