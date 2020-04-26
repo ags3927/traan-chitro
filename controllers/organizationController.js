@@ -110,9 +110,18 @@ const handlePATCHOrganizationDetails = async (req, res) => {
     try{
         let body = req.body;
         let data = buildOrganizationObject(body);
-        if (data.orgName === res.locals.middlewareResponse.user.orgName) {
+
+        let privileged =  (res.locals.middlewareResponse.status === 'OK');
+
+        if (privileged && data.orgName === res.locals.middlewareResponse.user.orgName) {
+
+            console.log(data);
+
             let result = await organizationInterface.editOrganization(
                 res.locals.middlewareResponse.user.orgName, data);
+
+            console.log(result);
+
             if (result.status === 'OK') {
                 res.status(200).send({
                     message: 'Organization details updated successfully'
@@ -124,7 +133,7 @@ const handlePATCHOrganizationDetails = async (req, res) => {
             }
         } else {
             res.status(500).send({
-                message: 'User not authenticated'
+                message: 'User not authenticated to edit this profile'
             });
         }
     } catch (e) {

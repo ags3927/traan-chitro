@@ -44,7 +44,7 @@ const deleteOrganization = async (orgName) => {
 const editOrganization = async (orgName, orgObject) => {
     try {
         if (orgName !== orgObject.orgName) {
-            await userInterface.updateUserByOrgName(orgName, orgObject.orgName);
+            await userInterface.updateUserByOrganizationName(orgName, orgObject.orgName);
             await activityInterface.editActivities(orgName, orgObject.orgName);
         }
 
