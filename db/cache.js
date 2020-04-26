@@ -11,7 +11,7 @@ const get = (key) => {
         if (cache.has(key)) {
             return {
                 found: true,
-                data: cache.get(key),
+                data: JSON.parse(cache.get(key)),
             };
         }
     } catch (err) {
@@ -25,7 +25,7 @@ const setWithExpiration = (key, val, expirationTimeInSeconds) => {
     let status = "OK";
 
     try {
-        cache.set(key, val, expirationTimeInSeconds);
+        cache.set(key, JSON.stringify(val), expirationTimeInSeconds);
     } catch (err) {
         status = "ERROR";
     }
