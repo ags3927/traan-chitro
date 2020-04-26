@@ -59,7 +59,10 @@ let handleAuthentication = async (req, res, next) => {
         }
         next();
     } catch (e) {
-        next(e);
+        res.locals.middlewareResponse = {
+            status: "ERROR"
+        };
+        next();
     }
 };
 
