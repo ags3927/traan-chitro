@@ -1,7 +1,5 @@
 //initialization
-process.env.VUE_APP_API_KEY = 'AIzaSyBdudQyn0ECon1ggxM-i3t4xhbQTVYAgLA';
 
-process.env.MONGODB_URI = 'mongodb+srv://arshuvo:ars123456789@tran-chitrodb-hge7d.mongodb.net/tran-chitro?retryWrites=true&w=majority';
 require('./db/mongoose');
 
 const history = require('connect-history-api-fallback');
@@ -18,10 +16,6 @@ const indexRouter = require('./routes');
 const apiRouter = require('./routes/api');
 
 const app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
