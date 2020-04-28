@@ -1,4 +1,4 @@
-# TRAN CHITRO
+# TRAAN CHITRO
 
 Notes and Conventions
 - 
