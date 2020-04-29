@@ -1,6 +1,10 @@
 # Test Input Files
 routes/test.js
 routes/insertTest.js
+route_tests/routeTest.js
+
+# Route Tests
+route_tests/*.js
 
 # Logs
 logs

@@ -146,9 +146,44 @@ const handlePATCHOrganizationDetails = async (req, res) => {
     }
 };
 
+const handlePOSTOrganization = async (req, res) => {
+    try {
+        let body = req.body;
+        console.log('BODY = ', body);
+        //let privileged = res.locals.middlewareResponse.status === 'OK';
+        if (true) {
+            let org = buildOrganizationObject(body);
+            let result = await organizationInterface.insertOrganization(org);
+            if (result.status === 'OK') {
+                res.status(200).send({
+                    message: 'Organization inserted successfully'
+                });
+            } else {
+                console.log(result.message);
+                res.status(500).send({
+                    message: 'Could not insert organization',
+                    error: result.message
+                });
+            }
+        } else {
+            console.log('User not authorized to perform this action')
+            res.status(500).send({
+                message: 'User not authorized to perform this action'
+            });
+        }
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send({
+            message: 'ERROR in POST /api/org\\Could not post organization!',
+            error: e.message
+        });
+    }
+}
+
 module.exports = {
     handleGETOrganizationNames,
     handleGETOrganizationDetails,
     handlePOSTRegister,
-    handlePATCHOrganizationDetails
+    handlePATCHOrganizationDetails,
+    handlePOSTOrganization
 };

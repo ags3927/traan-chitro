@@ -101,14 +101,17 @@ const handlePOSTActivity = async (req, res) => {
 
             let result = await activityInterface.insertActivity(data);
 
+            console.log('RESULT = ', result);
+
             if (result.status === 'OK') {
                 res.status(200).send({
                     message: 'Successfully inserted new relief activity'
                 });
             } else {
                 res.status(500).send({
-                    message: 'Could not insert new relief activity'
-                })
+                    message: 'Could not insert new relief activity',
+                    error: result.message
+                });
             }
         }
         else {
