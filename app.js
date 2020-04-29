@@ -43,7 +43,6 @@ app.use('/', indexRouter);
 
 //API ROUTES
 app.use('/api', apiRouter);
-app.use('/api/login', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -58,12 +57,11 @@ app.use(function(err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
 });
 
 //404
 app.get('*', function(req, res) {
-    res.status(404).render('404');
+    res.status(404).send('404');
 });
 
 module.exports = app;
