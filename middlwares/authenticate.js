@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const userInterface = require('../db/interfaces/userInterface');
 
-let handlePOSTLogIn = async (req, res) => {
+let handlePOSTLogIn = async (req, res, next) => {
     try{
         let body = req.body;
         let username = body.username;
@@ -12,9 +12,16 @@ let handlePOSTLogIn = async (req, res) => {
         let user = userData.data;
 
         if (user === null){
-            res.status(500).send({
-                message: "User does not exist"
-            })
+
+            res.locals.middlewareResponse = {
+                consume: true,
+                responseStatus: 500,
+                responseObject: {
+                    message: "User does not exist"
+                }
+            };
+
+            next();
         }
 
         let matched = await bcrypt.compare(password, user.password);
@@ -25,17 +32,34 @@ let handlePOSTLogIn = async (req, res) => {
             user.tokens.push({access,token});
             user.save();
 
-            res.status(200).send({token});
+            res.locals.middlewareResponse = {
+                consume: false,
+                responseStatus: 200,
+                responseObject: {token}
+            };
+
+            next();
         } else {
-            res.status(500).send({
-                message: "Incorrect password"
-            })
+            res.locals.middlewareResponse = {
+                consume: true,
+                responseStatus: 500,
+                responseObject: {
+                    message: "Incorrect password"
+                }
+            };
+
+            next();
         }
     } catch (e) {
-        res.status(500).send({
-            message: "ERROR in POST /api/login\\Could not login",
-            error: e.message
-        });
+        res.locals.middlewareResponse = {
+            consume: true,
+            responseStatus: 500,
+            responseObject: {
+                message: "ERROR in POST /api/login\\Could not login",
+                error: e.message
+            }
+        };
+        next();
     }
 };
 
