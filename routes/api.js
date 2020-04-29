@@ -4,6 +4,7 @@ const router = express.Router();
 const activityController = require('./../controllers/activityController');
 const organizationController = require('./../controllers/organizationController');
 const userController = require('./../controllers/userController');
+const rateLimiter = require('./../middlwares/rateLimit');
 const authenticate = require('./../middlwares/authenticate');
 
 router.get('/pins', authenticate.handleAuthentication, activityController.handleGETPins);
@@ -18,7 +19,7 @@ router.post('/activity', authenticate.handleAuthentication, activityController.h
 
 router.post('/register', organizationController.handlePOSTRegister);
 
-router.post('/login', authenticate.handlePOSTLogIn);
+router.post('/login', rateLimiter.preHandlerRateLimiter, authenticate.handlePOSTLogIn, rateLimiter.postHandlerRateLimiter);
 
 router.post('/logout', authenticate.handleAuthentication, authenticate.handlePOSTLogOut);
 
