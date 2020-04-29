@@ -26,6 +26,7 @@
     "mongoose-validator": "^2.1.0",
     "morgan": "~1.9.1",
     "node-cache": "^5.1.0",
+    "rate-limiter-flexible": "^2.1.4",
     "url-regex": "^5.0.0",
     "validator": "^13.0.0"
   },
