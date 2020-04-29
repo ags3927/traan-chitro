@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const activityController = require('./../controllers/activityController.js');
-const organizationController = require('./../controllers/organizationController.js');
-const authenticate = require('./../middlwares/authenticate.js');
+const activityController = require('./../controllers/activityController');
+const organizationController = require('./../controllers/organizationController');
+const userController = require('./../controllers/userController');
+const authenticate = require('./../middlwares/authenticate');
 
 router.get('/pins', authenticate.handleAuthentication, activityController.handleGETPins);
 
@@ -22,5 +23,9 @@ router.post('/login', authenticate.handlePOSTLogIn);
 router.post('/logout', authenticate.handleAuthentication, authenticate.handlePOSTLogOut);
 
 router.patch('/orgdetails', authenticate.handleAuthentication, organizationController.handlePATCHOrganizationDetails);
+
+// router.post('/org', organizationController.handlePOSTOrganization);
+//
+// router.post('/user', userController.handlePOSTUser);
 
 module.exports = router;
