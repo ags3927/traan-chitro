@@ -21,7 +21,7 @@ let handlePOSTLogIn = async (req, res, next) => {
                 }
             };
 
-            next();
+            return next();
         }
 
         let matched = await bcrypt.compare(password, user.password);
@@ -38,7 +38,7 @@ let handlePOSTLogIn = async (req, res, next) => {
                 responseObject: {token}
             };
 
-            next();
+            return next();
         } else {
             res.locals.middlewareResponse = {
                 consume: true,
