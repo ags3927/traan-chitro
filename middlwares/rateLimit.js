@@ -77,14 +77,14 @@ const preHandlerRateLimiter = async (req, res, next) => {
         if (!checkedResult.isBlocked){
             next();
         } else {
-            res.status(429).send(`Too Many Requests \n Retry after ${checkedResult.retryAfterSeconds} second(s)`);
+            res.status(429).send(`Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`);
         }
     } catch (rejRes) {
         if (rejRes instanceof Error){
             res.status(500).send(rejRes.message);
         } else {
             let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext/1000) || 1;
-            res.status(429).send(`Too Many Requests \n Retry after ${rejRetryAfterSeconds} second(s)`);
+            res.status(429).send(`Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`);
         }
     }
 };
@@ -106,7 +106,7 @@ const postHandlerRateLimiter = async (req, res) => {
             res.status(500).send(rejRes.message);
         } else {
             let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext/1000) || 1;
-            res.status(429).send(`Too Many Requests \n Retry after ${rejRetryAfterSeconds} second(s)`);
+            res.status(429).send(`Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`);
         }
     }
 };
