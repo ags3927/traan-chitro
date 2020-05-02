@@ -1,6 +1,6 @@
 let {RateLimiterMemory} = require('rate-limiter-flexible');
 
-const maxWrongAttemptsByIPPerDay = 3;
+const maxWrongAttemptsByIPPerDay = 10;
 
 const optsPrivileged = {
     keyPrefix: 'privileged',
@@ -17,8 +17,8 @@ const optsUnprivileged = {
 const optsSlowBruteByIP = {
     keyPrefix: 'login_fail_ip_per_day',
     points: maxWrongAttemptsByIPPerDay,
-    duration: 60*4,
-    blockDuration: 60*4 //block for 1 day if 100 wrong attempts in a day
+    duration: 60 * 60,
+    blockDuration: 60 * 60 * 24 // Block for 1 day if 10 wrong attempts in an hour
 }
 
 const rateLimiterPrivileged = new RateLimiterMemory(optsPrivileged);
@@ -29,7 +29,7 @@ const rateLimitSlowBruteByIP = new RateLimiterMemory(optsSlowBruteByIP);
 const IsIPBlocked = async (ip) => {
     let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(ip);
 
-    let [retryAfterSeconds,isBlocked] = [0,false];
+    let [retryAfterSeconds, isBlocked] = [0, false];
 
     if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > maxWrongAttemptsByIPPerDay) {
         retryAfterSeconds = Math.round(resSlowBruteByIP.msBeforeNext / 1000) || 1;
@@ -44,29 +44,24 @@ const IsIPBlocked = async (ip) => {
 
 const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => {
     let privileged = (res.locals.middlewareResponse.status === 'OK');
-    if (privileged){
-        try {
+    try {
+        if (privileged) {
             await rateLimiterPrivileged.consume(req.ip);
-            next();
-        } catch (rejRes) {
-            if (rejRes instanceof Error){
-                ////next(rejRes);
-            } else {
-                console.error("ERROR: Too many request coming in from IP. HTTP: 429");
-                return res.status(429).send('Too Many Requests');
-            }
-        }
-    } else {
-        try {
+        } else {
             await rateLimiterUnprivileged.consume(req.ip);
-            next();
-        } catch (rejRes) {
-            if (rejRes instanceof Error){
-                ////next(rejRes);
-            } else {
-                console.error("ERROR: Too many request coming in from IP. HTTP: 429");
-                return res.status(429).send('Too Many Requests');
-            }
+        }
+        next();
+    } catch (rejRes) {
+        if (rejRes instanceof Error) {
+            ////next(rejRes);
+            return res.status(500).send({
+                message: 'Error in rate limiting middleware'
+            });
+        } else {
+            console.error('ERROR: Too many request coming in from IP. HTTP: 429');
+            return res.status(429).send({
+                message: 'Too Many Requests'
+            });
         }
     }
 };
@@ -74,17 +69,21 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
 const preHandlerRateLimiter = async (req, res, next) => {
     try {
         let checkedResult = await IsIPBlocked(req.ip);
-        if (!checkedResult.isBlocked){
+        if (!checkedResult.isBlocked) {
             next();
         } else {
-            res.status(429).send(`Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`);
+            res.status(429).send({
+                message: `Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`
+            });
         }
     } catch (rejRes) {
-        if (rejRes instanceof Error){
+        if (rejRes instanceof Error) {
             res.status(500).send(rejRes.message);
         } else {
-            let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext/1000) || 1;
-            res.status(429).send(`Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`);
+            let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
+            res.status(429).send({
+                message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
+            });
         }
     }
 };
@@ -96,17 +95,19 @@ const postHandlerRateLimiter = async (req, res) => {
             await rateLimitSlowBruteByIP.consume(req.ip);
             res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
         } else {
-            if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > 0){
+            if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > 0) {
                 await rateLimitSlowBruteByIP.delete(req.ip);
             }
             res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
         }
     } catch (rejRes) {
-        if (rejRes instanceof Error){
+        if (rejRes instanceof Error) {
             res.status(500).send(rejRes.message);
         } else {
-            let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext/1000) || 1;
-            res.status(429).send(`Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`);
+            let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
+            res.status(429).send({
+                message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
+            });
         }
     }
 };
