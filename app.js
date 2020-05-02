@@ -19,11 +19,19 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const rateLimiter = require('./middlwares/rateLimit');
+const authenticator = require('./middlwares/authenticate');
+
 //Routers
 const indexRouter = require('./routes');
 const apiRouter = require('./routes/api');
 
 const app = express();
+
+//Rate Limiters and Authenticators
+app.use(rateLimiter.preHandlerRateLimiter);
+app.use(authenticator.handleAuthentication);
+app.use(rateLimiter.rateLimiterMiddlewareInMemoryWithAuthChecking);
 
 app.use(logger('dev'));
 app.use(express.json());
