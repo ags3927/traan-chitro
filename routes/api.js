@@ -45,8 +45,8 @@ router.patch('/orgdetails',
     organizationController.handlePATCHOrganizationDetails
 );
 
-// router.post('/org', organizationController.handlePOSTOrganization);
-//
-// router.post('/user', userController.handlePOSTUser);
+router.post('/org', organizationController.handlePOSTOrganization);
+
+router.post('/user', userController.handlePOSTUser);
 
 module.exports = router;

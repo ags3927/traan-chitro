@@ -148,10 +148,13 @@ const handlePATCHOrganizationDetails = async (req, res) => {
 
 const handlePOSTOrganization = async (req, res) => {
     try {
+        let token = req.header('x-auth');
+        let privileged = token === 'lekhaporaputkirmoddhebhoiradimu';
         let body = req.body;
         console.log('BODY = ', body);
         //let privileged = res.locals.middlewareResponse.status === 'OK';
-        if (true) {
+
+        if (privileged) {
             let org = buildOrganizationObject(body);
             let result = await organizationInterface.insertOrganization(org);
             if (result.status === 'OK') {
