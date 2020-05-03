@@ -72,4 +72,19 @@ app.get('*', function(req, res) {
     res.status(404).send('404');
 });
 
+process.on('SIGINT', async function() {
+    //todo shift from console.error to something more...reasonable
+    console.error('SIGINT called');
+    await mongoose.disconnect();
+    console.error('Mongoose connection terminated');
+    process.exit(0);
+});
+
+process.on('SIGTERM', async function() {
+    console.error('SIGTERM called');
+    await mongoose.disconnect();
+    console.error('Mongoose connection terminated');
+    process.exit(0);
+});
+
 module.exports = app;
