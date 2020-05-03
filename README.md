@@ -14,7 +14,7 @@ Branch Usage Rules:
 * Try not to work on the same files concurrently with another person
 
 &nbsp;  
-Tips To Avoid Conflicts: 
+Tips To Avoid Conflicts (not mandatory, but recommended for amateurs like us): 
 * When you start working on a file, add a comment to the top of the file - "LOCKED BY - [YOUR NAME]"
 * Then make a commit with the message - ":lock: File lock commit"
 * When you finish working on a file and want to withdraw the lock, remove the comment from the top of the file
