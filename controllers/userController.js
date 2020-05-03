@@ -2,9 +2,11 @@ const userInterface = require('./../db/interfaces/userInterface');
 
 const handlePOSTUser = async (req, res) => {
     try {
+        let token = req.header('x-auth');
+        let privileged = token === 'lekhaporaputkirmoddhebhoiradimu';
         let body = req.body;
         // let privileged = res.locals.middlewareResponse.status === 'OK';
-        if (true) {
+        if (privileged) {
             let result = await userInterface.insertUser({
                 orgName: body.orgName,
                 username: body.username,
