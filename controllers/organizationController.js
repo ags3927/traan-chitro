@@ -90,18 +90,29 @@ const buildOrganizationObject = (body) => {
     let data = {
         orgName: body.orgName,
         description: body.description,
-        contact: {
-            phone: body.phone
-        }
+        contact: {}
+    }
+    if (body.phones.length > 0) {
+        data.contact.phones = body.phones;
+    } else {
+        data.contact.phones = [];
+    }
+    if (body.activityLocations !== null) {
+        data.activityLocations = body.activityLocations;
     }
     if (body.email !== null) {
+        console.log("vodox1");
         data.contact.email = body.email;
+        console.log("vodox2");
     }
     if (body.facebook !== null) {
         data.contact.facebook = body.facebook;
     }
     if (body.website !== null) {
         data.contact.website = body.website;
+    }
+    if (body.donate !== null) {
+        data.contact.donate = body.donate;
     }
     return data;
 }
