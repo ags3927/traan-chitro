@@ -1,6 +1,7 @@
 const organizationRepository = require('./../db/repository/organizationRepository.js');
 const organizationInterface = require('./../db/interfaces/organizationInterface.js');
 const toBeRegisteredOrganizationInterface = require('./../db/interfaces/toBeRegisteredOrganizationInterface.js');
+const cache = require('./../db/cache');
 
 /**
  * Handles GET orgs request for the names of all organizations
@@ -90,18 +91,29 @@ const buildOrganizationObject = (body) => {
     let data = {
         orgName: body.orgName,
         description: body.description,
-        contact: {
-            phone: body.phone
-        }
+        contact: {}
+    }
+    if (body.phones.length > 0) {
+        data.contact.phones = body.phones;
+    } else {
+        data.contact.phones = [];
+    }
+    if (body.activityLocations !== null) {
+        data.activityLocations = body.activityLocations;
     }
     if (body.email !== null) {
+        console.log("vodox1");
         data.contact.email = body.email;
+        console.log("vodox2");
     }
     if (body.facebook !== null) {
         data.contact.facebook = body.facebook;
     }
     if (body.website !== null) {
         data.contact.website = body.website;
+    }
+    if (body.donate !== null) {
+        data.contact.donate = body.donate;
     }
     return data;
 }
@@ -124,6 +136,9 @@ const handlePATCHOrganizationDetails = async (req, res) => {
             console.log(result);
 
             if (result.status === 'OK') {
+                let value = await organizationInterface.findAllOrganizationNames();
+                cache.set("allOrganizationName", value.data);
+
                 res.status(200).send({
                     message: 'Organization details updated successfully'
                 });
@@ -157,7 +172,11 @@ const handlePOSTOrganization = async (req, res) => {
         if (privileged) {
             let org = buildOrganizationObject(body);
             let result = await organizationInterface.insertOrganization(org);
+
             if (result.status === 'OK') {
+                let value = await organizationInterface.findAllOrganizationNames();
+                cache.set("allOrganizationName", value.data);
+
                 res.status(200).send({
                     message: 'Organization inserted successfully'
                 });

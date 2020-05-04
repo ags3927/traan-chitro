@@ -129,9 +129,64 @@ const handlePOSTActivity = async (req, res) => {
     }
 };
 
+const handlePOSTActivities = async (req, res) => {
+    try {
+        let body = req.body;
+        let token = req.header('x-auth');
+        let privileged =  (token === 'lekhaporaputkirmoddhebhoiradimu');
+
+        if (privileged) {
+            let data = [];
+            body.forEach((doc) => {
+                let datum = {
+                    orgName: doc.orgName,
+                    typeOfRelief: doc.typeOfRelief,
+                    location: {
+                        type: "Point",
+                        coordinates: [doc.location.lng, doc.location.lat]
+                    },
+                    contents: doc.contents,
+                    supplyDate: new Date(doc.supplyDate)
+                };
+                data.push(datum);
+            })
+
+            console.log(data);
+
+            let result = await activityInterface.insertActivities(data);
+
+            console.log('RESULT = ', result);
+
+            if (result.status === 'OK') {
+                res.status(200).send({
+                    message: 'Successfully inserted new relief activity'
+                });
+            } else {
+                res.status(500).send({
+                    message: 'Could not insert new relief activity',
+                    error: result.message
+                });
+            }
+        }
+        else {
+            res.status(500).send({
+                message: 'User not authenticated for this action'
+            });
+        }
+
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send({
+            message: 'ERROR in POST /api/activity\\Could not insert activity',
+            error: e.message
+        });
+    }
+}
+
 
 module.exports = {
     handleGETPins,
     handleGETActivitiesByCoordinates,
-    handlePOSTActivity
+    handlePOSTActivity,
+    handlePOSTActivities
 };
