@@ -28,12 +28,13 @@ router.post('/activity',
 );
 
 router.post('/register',
-    organizationController.handlePOSTRegister
+    organizationController.handlePOSTRegister,
+    rateLimiter.rateLimiterMiddlewareRegister
 );
 
 router.post('/login',
     authenticate.handlePOSTLogIn,
-    rateLimiter.postHandlerRateLimiter
+    rateLimiter.rateLimiterMiddlewareAfter
 );
 
 router.post('/logout',
