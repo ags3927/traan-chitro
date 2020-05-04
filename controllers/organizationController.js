@@ -59,7 +59,7 @@ const handleGETOrganizationDetails = async (req, res) => {
     }
 };
 
-const handlePOSTRegister = async (req, res) => {
+const handlePOSTRegister = async (req, res, next) => {
     try {
         let body = req.body;
 
@@ -67,22 +67,44 @@ const handlePOSTRegister = async (req, res) => {
                                 insertToBeRegisteredOrganization(buildOrganizationObject(body));
 
         if (result.status === "OK") {
-            res.status(200).send({
-                message: 'Registration entry added successfully!'
-            })
+            // res.status(200).send({
+            //     message: 'Registration entry added successfully!'
+            // })
+            res.locals.middlewareResponse = {
+                responseStatus: 200,
+                responseObject: {
+                    message: "Registration entry added successfully!"
+                }
+            };
+            next();
         } else {
             console.log(result.data);
-            res.status(500).send({
-                message: 'Could not register',
-                error: result.message
-            });
+            // res.status(500).send({
+            //     message: 'Could not register',
+            //     error: result.message
+            // });
+
+            res.locals.middlewareResponse = {
+                responseStatus: 500,
+                responseObject: {
+                    message: "Could not register"
+                }
+            };
+            next();
         }
     } catch (e) {
         console.log(e.message);
-        return res.status(500).send({
-            message: 'ERROR in GET /api/register\\Could not get register!',
-            error: e.message
-        });
+        // return res.status(500).send({
+        //     message: 'ERROR in GET /api/register\\Could not get register!',
+        //     error: e.message
+        // });
+        res.locals.middlewareResponse = {
+            responseStatus: 500,
+            responseObject: {
+                message: "ERROR in GET /api/register\\\\Could not get register!"
+            }
+        };
+        next();
     }
 };
 
