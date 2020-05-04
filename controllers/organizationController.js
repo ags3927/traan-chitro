@@ -1,6 +1,7 @@
 const organizationRepository = require('./../db/repository/organizationRepository.js');
 const organizationInterface = require('./../db/interfaces/organizationInterface.js');
 const toBeRegisteredOrganizationInterface = require('./../db/interfaces/toBeRegisteredOrganizationInterface.js');
+const cache = require('./../db/cache');
 
 /**
  * Handles GET orgs request for the names of all organizations
@@ -135,6 +136,9 @@ const handlePATCHOrganizationDetails = async (req, res) => {
             console.log(result);
 
             if (result.status === 'OK') {
+                let value = await organizationInterface.findAllOrganizationNames();
+                cache.set("allOrganizationName", value.data);
+
                 res.status(200).send({
                     message: 'Organization details updated successfully'
                 });
@@ -168,7 +172,11 @@ const handlePOSTOrganization = async (req, res) => {
         if (privileged) {
             let org = buildOrganizationObject(body);
             let result = await organizationInterface.insertOrganization(org);
+
             if (result.status === 'OK') {
+                let value = await organizationInterface.findAllOrganizationNames();
+                cache.set("allOrganizationName", value.data);
+
                 res.status(200).send({
                     message: 'Organization inserted successfully'
                 });
