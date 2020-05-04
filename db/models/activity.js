@@ -27,7 +27,7 @@ const activitySchema = new Schema({
     },
     typeOfRelief: [{
         type: String,
-        enum: ['FOOD', 'PPE', 'SANITIZER', 'MASK', 'GLOVE', 'DISINFECTION', 'CASH'],
+        enum: ['FOOD', 'MEDICAL_SUPPLY', 'DISINFECTION', 'CASH'],
         required: true
     }],
     location: {
