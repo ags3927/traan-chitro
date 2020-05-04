@@ -2,6 +2,7 @@
 routes/test.js
 routes/insertTest.js
 route_tests/routeTest.js
+libs/
 
 # Route Tests
 route_tests/*.js
