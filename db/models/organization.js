@@ -4,6 +4,19 @@ const urlRegex = require('url-regex')
 const {isEmail} = require('validator');
 const Schema = mongoose.Schema;
 
+let validatePhone = (phones) => {
+    if (phones.length === 0) {
+        throw new mongoose.Error('Phones array cannot be empty');
+    }
+    console.log("PHONES ARRAY = ", phones);
+    phones.forEach((phone) => {
+        console.log("PHONE = ", phone);
+        if (phone.length !== 14) {
+            throw new mongoose.Error('Phone number has to be 14 digits long');
+        }
+    });
+}
+
 let validateURL = (url) => {
     if (!urlRegex({exact: true}).test(url)) {
         throw new mongoose.Error('Invalid url');
@@ -30,11 +43,9 @@ const organizationSchema = new Schema({
         minlength: 10
     },
     contact: {
-        phone: {
-            type: String,
-            required: true,
-            minlength: 14,
-            maxlength: 14
+        phones: {
+            type: [String],
+            validate: [validatePhone]
         },
         email: {
             type: String,
@@ -64,6 +75,11 @@ const organizationSchema = new Schema({
                 validator: validateURL
             }
         }
+    },
+    activityLocations: {
+        type: String,
+        trim: true,
+        minlength: 1
     }
 });
 
