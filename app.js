@@ -29,7 +29,7 @@ const apiRouter = require('./routes/api');
 const app = express();
 
 //Rate Limiters and Authenticators
-app.use(rateLimiter.preHandlerRateLimiter);
+app.use(rateLimiter.rateLimiterMiddlewareBefore);
 app.use(authenticator.handleAuthentication);
 app.use(rateLimiter.rateLimiterMiddlewareInMemoryWithAuthChecking);
 
