@@ -79,7 +79,7 @@ const handlePOSTRegister = async (req, res, next) => {
             };
             next();
         } else {
-            console.log(result.data);
+            console.log("ERROR MESSAGE = ", result.message);
             // res.status(500).send({
             //     message: 'Could not register',
             //     error: result.message
@@ -206,7 +206,7 @@ const handlePOSTOrganization = async (req, res) => {
                     message: 'Organization inserted successfully'
                 });
             } else {
-                console.log(result.message);
+                console.log("ERROR MESSAGE = ", result.message);
                 res.status(500).send({
                     message: 'Could not insert organization',
                     error: result.message
