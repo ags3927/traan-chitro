@@ -93,7 +93,7 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
     }
 };
 
-const preHandlerRateLimiter = async (req, res, next) => {
+const rateLimiterMiddlewareBefore = async (req, res, next) => {
     try {
         let checkedResult = await IsIPBlocked(req.ip);
         if (!checkedResult.isBlocked) {
@@ -116,7 +116,7 @@ const preHandlerRateLimiter = async (req, res, next) => {
     }
 };
 
-const postHandlerRateLimiter = async (req, res) => {
+const rateLimiterMiddlewareAfter = async (req, res) => {
     try {
         let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(req.ip);
         if (res.locals.middlewareResponse.consume) {
@@ -140,7 +140,7 @@ const postHandlerRateLimiter = async (req, res) => {
     }
 };
 
-const postRegisterRateLimiter = async (req, res) => {
+const rateLimiterMiddlewareRegister = async (req, res) => {
     try {
         await rateLimitMaxRegAttemptsByIP.consume(req.ip);
         res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
@@ -161,7 +161,7 @@ const postRegisterRateLimiter = async (req, res) => {
 
 module.exports = {
     rateLimiterMiddlewareInMemoryWithAuthChecking,
-    preHandlerRateLimiter,
-    postHandlerRateLimiter,
-    postRegisterRateLimiter
+    rateLimiterMiddlewareBefore,
+    rateLimiterMiddlewareAfter,
+    rateLimiterMiddlewareRegister
 }
