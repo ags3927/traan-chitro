@@ -49,4 +49,6 @@ router.post('/org', organizationController.handlePOSTOrganization);
 
 router.post('/user', userController.handlePOSTUser);
 
+router.post('/activities', activityController.handlePOSTActivities);
+
 module.exports = router;
