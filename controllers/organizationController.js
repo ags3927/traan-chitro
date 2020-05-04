@@ -71,6 +71,7 @@ const handlePOSTRegister = async (req, res, next) => {
             //     message: 'Registration entry added successfully!'
             // })
             res.locals.middlewareResponse = {
+                inserted: true,
                 responseStatus: 200,
                 responseObject: {
                     message: "Registration entry added successfully!"
@@ -85,6 +86,7 @@ const handlePOSTRegister = async (req, res, next) => {
             // });
 
             res.locals.middlewareResponse = {
+                inserted: false,
                 responseStatus: 500,
                 responseObject: {
                     message: "Could not register"
@@ -99,6 +101,7 @@ const handlePOSTRegister = async (req, res, next) => {
         //     error: e.message
         // });
         res.locals.middlewareResponse = {
+            inserted: false,
             responseStatus: 500,
             responseObject: {
                 message: "ERROR in GET /api/register\\\\Could not get register!"

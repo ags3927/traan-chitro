@@ -2,7 +2,8 @@ let {RateLimiterMemory} = require('rate-limiter-flexible');
 
 const maxWrongAttemptsByIPPerDay = 10;
 const maxRequestsByIPPerDay = 10;//10000; // this enables one to send 5 req/second for 33 minutes :/
-const maxRegAttemptByIPPerDay = 5;
+const maxSuccessfulRegAttemptByIPPerDay = 5;
+const maxFailedRegAttemptByIPPerDay = 10; // 20;
 
 const optsPrivileged = {
     keyPrefix: 'privileged',
@@ -30,9 +31,16 @@ const optsMaxRequestsByIP = {
     blockDuration: 60*10//60*60*24*365
 }
 
-const optsMaxRegAttemptsByIP = {
-    keyPrefix: 'reg_attempts_by_ip_per_day',
-    points: maxRegAttemptByIPPerDay,
+const optsMaxSuccessfulRegAttemptsByIP = {
+    keyPrefix: 'successful_reg_attempts_by_ip_per_day',
+    points: maxSuccessfulRegAttemptByIPPerDay,
+    duration: 60*10,//60*60*60*24,
+    blockDuration: 60*10//60*60*24
+}
+
+const optsMaxFailedRegAttemptsByIP = {
+    keyPrefix: 'failed_reg_attempts_by_ip_per_day',
+    points: maxFailedRegAttemptByIPPerDay,
     duration: 60*10,//60*60*60*24,
     blockDuration: 60*10//60*60*24
 }
@@ -42,21 +50,26 @@ const rateLimiterPrivileged = new RateLimiterMemory(optsPrivileged);
 const rateLimiterUnprivileged = new RateLimiterMemory(optsUnprivileged);
 const rateLimitSlowBruteByIP = new RateLimiterMemory(optsSlowBruteByIP);
 const rateLimitMaxRequestsByIP = new RateLimiterMemory(optsMaxRequestsByIP);
-const rateLimitMaxRegAttemptsByIP = new RateLimiterMemory(optsMaxRegAttemptsByIP);
+const rateLimitMaxSuccessfulRegAttemptsByIP = new RateLimiterMemory(optsMaxSuccessfulRegAttemptsByIP);
+const rateLimitMaxFailedRegAttemptsByIP = new RateLimiterMemory(optsMaxFailedRegAttemptsByIP);
 
 
 const IsIPBlocked = async (ip) => {
     let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(ip);
     let resMaxRequestsByIP = await rateLimitMaxRequestsByIP.get(ip);
-    let resMaxRegAttemptsByIP = await rateLimitMaxRegAttemptsByIP.get(ip);
+    let resMaxSuccessfulRegAttemptsByIP = await rateLimitMaxSuccessfulRegAttemptsByIP.get(ip);
+    let resMaxFailedRegAttemptsByIP = await rateLimitMaxFailedRegAttemptsByIP.get(ip);
 
     let [retryAfterSeconds, isBlocked] = [0, false];
 
     if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > maxWrongAttemptsByIPPerDay) {
         retryAfterSeconds = Math.round(resSlowBruteByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
-    } else if (resMaxRegAttemptsByIP !== null && resMaxRegAttemptsByIP.consumedPoints > maxRegAttemptByIPPerDay) {
-        retryAfterSeconds = Math.round(resMaxRegAttemptsByIP.msBeforeNext / 1000) || 1;
+    } else if (resMaxSuccessfulRegAttemptsByIP !== null && resMaxSuccessfulRegAttemptsByIP.consumedPoints > maxSuccessfulRegAttemptByIPPerDay) {
+        retryAfterSeconds = Math.round(resMaxSuccessfulRegAttemptsByIP.msBeforeNext / 1000) || 1;
+        isBlocked = true;
+    } else if (resMaxFailedRegAttemptsByIP !== null && resMaxFailedRegAttemptsByIP.consumedPoints > maxFailedRegAttemptByIPPerDay) {
+        retryAfterSeconds = Math.round(resMaxFailedRegAttemptsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
     } else if (resMaxRequestsByIP !== null && resMaxRequestsByIP.consumedPoints > maxRequestsByIPPerDay) {
         retryAfterSeconds = Math.round(resMaxRequestsByIP.msBeforeNext / 1000) || 1;
@@ -142,7 +155,11 @@ const postHandlerRateLimiter = async (req, res) => {
 
 const postRegisterRateLimiter = async (req, res) => {
     try {
-        await rateLimitMaxRegAttemptsByIP.consume(req.ip);
+        if (res.locals.middlewareResponse.inserted) {
+            await rateLimitMaxSuccessfulRegAttemptsByIP.consume(req.ip);
+        } else {
+            await rateLimitMaxFailedRegAttemptsByIP.consume(req.ip);
+        }
         res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
     } catch (rejRes) {
         if (rejRes instanceof Error) {
@@ -155,9 +172,6 @@ const postRegisterRateLimiter = async (req, res) => {
         }
     }
 };
-
-
-
 
 module.exports = {
     rateLimiterMiddlewareInMemoryWithAuthChecking,
