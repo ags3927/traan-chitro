@@ -1,9 +1,9 @@
 let {RateLimiterMemory} = require('rate-limiter-flexible');
 
-const maxWrongAttemptsByIPPerDay = 10;
-const maxRequestsByIPPerDay = 10000; // this enables one to send 5 req/second for 33 minutes :/
-const maxSuccessfulRegAttemptByIPPerDay = 5;
-const maxFailedRegAttemptByIPPerDay = 20;
+const maxWrongAttemptsByIPPerDay = 2;
+const maxRequestsByIPPerDay = 10; // this enables one to send 5 req/second for 33 minutes :/
+const maxSuccessfulRegAttemptByIPPerDay = 2;
+const maxFailedRegAttemptByIPPerDay = 5;
 
 const optsPrivileged = {
     keyPrefix: 'privileged',
@@ -25,7 +25,7 @@ const optsSlowBruteByIP = {
 }
 
 const optsMaxRequestsByIP = {
-    keyPrefix: 'request_by_ip_per_day',
+    keyPrefix: 'rquest_by_ip_per_day',
     points: maxRequestsByIPPerDay,
     duration: 60*60*24,
     blockDuration: 60*60*24*365
@@ -63,17 +63,33 @@ const IsIPBlocked = async (ip) => {
     let [retryAfterSeconds, isBlocked] = [0, false];
 
     if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > maxWrongAttemptsByIPPerDay) {
+
+        console.log("Slow Brute IP Address = ", rateLimitSlowBruteByIP.getKey(ip));
+
         retryAfterSeconds = Math.round(resSlowBruteByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
+
     } else if (resMaxSuccessfulRegAttemptsByIP !== null && resMaxSuccessfulRegAttemptsByIP.consumedPoints > maxSuccessfulRegAttemptByIPPerDay) {
+
+        console.log("Successful Reg IP Address = ", rateLimitMaxSuccessfulRegAttemptsByIP.getKey(ip));
+
         retryAfterSeconds = Math.round(resMaxSuccessfulRegAttemptsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
+
     } else if (resMaxFailedRegAttemptsByIP !== null && resMaxFailedRegAttemptsByIP.consumedPoints > maxFailedRegAttemptByIPPerDay) {
+
+        console.log("Failed Reg IP Address = ", rateLimitMaxFailedRegAttemptsByIP.getKey(ip));
+
         retryAfterSeconds = Math.round(resMaxFailedRegAttemptsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
+
     } else if (resMaxRequestsByIP !== null && resMaxRequestsByIP.consumedPoints > maxRequestsByIPPerDay) {
+
+        console.log("Max Req IP Address = ", rateLimitMaxRequestsByIP.getKey(ip));
+
         retryAfterSeconds = Math.round(resMaxRequestsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
+
     }
 
     return {
@@ -113,6 +129,7 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
             await rateLimitMaxRequestsByIP.consume(req.ip);
             next();
         } else {
+            console.log("Requester's IP Address = ", req.ip);
             res.status(429).send({
                 message: `Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`
             });
