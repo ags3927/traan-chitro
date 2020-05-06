@@ -6,6 +6,8 @@ const organizationController = require('./../controllers/organizationController'
 const userController = require('./../controllers/userController');
 const rateLimiter = require('./../middlwares/rateLimit');
 const authenticate = require('./../middlwares/authenticate');
+const mailSender = require('./../middlwares/mailSender');
+
 
 router.get('/pins',
     activityController.handleGETPins
@@ -29,6 +31,7 @@ router.post('/activity',
 
 router.post('/register',
     organizationController.handlePOSTRegister,
+    mailSender.sendMailHandler,
     rateLimiter.rateLimiterMiddlewareRegister
 );
 

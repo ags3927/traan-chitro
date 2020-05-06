@@ -14,26 +14,27 @@ const transporter = nodemailer.createTransport({
 
 
 
-let sendMail = async (req, res, next) => {
+let sendMailHandler = async (req, res, next) => {
   try {
       if (res.locals.middlewareResponse.inserted) {
-          let text = `${req.body.orgName} has requested for registration. Please check and verify.`;
+          let text = `${req.body.orgName} has requested for registration. Please check and verify.\nOrganization Details:\n${JSON.stringify(req.body, undefined, 2)}`;
           let mailOptions = {
               from,
               to,
               subject,
-              text
+              text,
           };
           await transporter.sendMail(mailOptions)
       }
       next();
   } catch (e) {
+      next();
       /// :/
   }
 };
 
 module.exports = {
-    sendMail
+    sendMailHandler
 };
 
 
