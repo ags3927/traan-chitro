@@ -121,7 +121,7 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
 const rateLimiterMiddlewareBefore = async (req, res, next) => {
     try {
 
-        console.log('X-Forwarded-For = ', req.header['X-Forwarded-For']);
+        console.log('X-Forwarded-For = ', req.header('X-Forwarded-For'));
 
         let checkedResult = await IsIPBlocked(req.connection.remoteAddress);
         if (!checkedResult.isBlocked) {
@@ -130,20 +130,20 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
         } else {
             res.status(429).send({
                 message: `Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`,
-                ip: req.header['X-Forwarded-For']
+                ip: req.header('X-Forwarded-For')
             });
         }
     } catch (rejRes) {
         if (rejRes instanceof Error) {
             res.status(500).send({
                 message: rejRes.message,
-                ip: req.header['X-Forwarded-For']
+                ip: req.header('X-Forwarded-For')
             });
         } else {
             let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
             res.status(429).send({
                 message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`,
-                ip: req.header['X-Forwarded-For']
+                ip: req.header('X-Forwarded-For')
             });
         }
     }
