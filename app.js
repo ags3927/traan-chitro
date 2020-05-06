@@ -8,11 +8,11 @@ if (env === 'development') {
     process.env.PORT = 3000;
 }
 
-require('./db/mongoose');
+const {mongoose} = require('./db/mongoose');
 
 const history = require('connect-history-api-fallback');
 const cors = require('cors');
-const bodyParser=require('body-parser');
+const bodyParser = require('body-parser');
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -35,11 +35,11 @@ app.use(authenticator.handleAuthentication);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 //SPA Handling
-const staticFileMiddleware = express.static(path.join(__dirname+'/dist'));
+const staticFileMiddleware = express.static(path.join(__dirname + '/dist'));
 app.use(staticFileMiddleware);
 app.use(history());
 app.use(staticFileMiddleware);
@@ -53,12 +53,12 @@ app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -68,11 +68,11 @@ app.use(function(err, req, res, next) {
 });
 
 //404
-app.get('*', function(req, res) {
+app.get('*', function (req, res) {
     res.status(404).send('404');
 });
 
-process.on('SIGINT', async function() {
+process.on('SIGINT', async function () {
     //todo shift from console.error to something more...reasonable
     console.error('SIGINT called');
     await mongoose.disconnect();
@@ -80,7 +80,7 @@ process.on('SIGINT', async function() {
     process.exit(0);
 });
 
-process.on('SIGTERM', async function() {
+process.on('SIGTERM', async function () {
     console.error('SIGTERM called');
     await mongoose.disconnect();
     console.error('Mongoose connection terminated');
