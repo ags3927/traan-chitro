@@ -12,14 +12,17 @@ let handlePOSTLogIn = async (req, res, next) => {
         let user = userData.data;
 
         if (user === null){
+            res.status(401).send({
+                message: 'User does not exist'
+            });
 
-            res.locals.middlewareResponse = {
-                consume: true,
-                responseStatus: 500,
-                responseObject: {
-                    message: "User does not exist"
-                }
-            };
+            // res.locals.middlewareResponse = {
+            //     consume: true,
+            //     responseStatus: 500,
+            //     responseObject: {
+            //         message: "User does not exist"
+            //     }
+            // };
 
             return next();
         }
@@ -32,33 +35,46 @@ let handlePOSTLogIn = async (req, res, next) => {
             user.tokens.push({access,token});
             user.save();
 
-            res.locals.middlewareResponse = {
-                consume: false,
-                responseStatus: 200,
-                responseObject: {token}
-            };
+            res.status(200).send({
+                token
+            });
+
+            // res.locals.middlewareResponse = {
+            //     consume: false,
+            //     responseStatus: 200,
+            //     responseObject: {token}
+            // };
 
             return next();
         } else {
-            res.locals.middlewareResponse = {
-                consume: true,
-                responseStatus: 500,
-                responseObject: {
-                    message: "Incorrect password"
-                }
-            };
+
+            res.status(401).send({
+                message: 'Incorrect Username/Password'
+            });
+
+            // res.locals.middlewareResponse = {
+            //     consume: true,
+            //     responseStatus: 500,
+            //     responseObject: {
+            //         message: "Incorrect password"
+            //     }
+            // };
 
             next();
         }
     } catch (e) {
-        res.locals.middlewareResponse = {
-            consume: true,
-            responseStatus: 500,
-            responseObject: {
-                message: "ERROR in POST /api/login\\Could not login",
-                error: e.message
-            }
-        };
+        res.status(500).send({
+            message: "ERROR in POST /api/login\\Could not login"
+        });
+
+        // res.locals.middlewareResponse = {
+        //     consume: true,
+        //     responseStatus: 500,
+        //     responseObject: {
+        //         message: "ERROR in POST /api/login\\Could not login",
+        //         error: e.message
+        //     }
+        // };
         next();
     }
 };
