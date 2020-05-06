@@ -59,7 +59,7 @@ const handleGETOrganizationDetails = async (req, res) => {
     }
 };
 
-const handlePOSTRegister = async (req, res) => {
+const handlePOSTRegister = async (req, res, next) => {
     try {
         let body = req.body;
 
@@ -77,6 +77,7 @@ const handlePOSTRegister = async (req, res) => {
                     message: "Registration entry added successfully!"
                 }
             };
+            next();
         } else {
             console.log("ERROR MESSAGE = ", result.message);
             // res.status(400).send({
@@ -106,6 +107,7 @@ const handlePOSTRegister = async (req, res) => {
                 message: "ERROR in GET /api/register\\\\Could not get register!"
             }
         };
+        next();
     }
 };
 

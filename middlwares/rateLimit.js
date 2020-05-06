@@ -98,9 +98,9 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
     let privileged = (res.locals.middlewareResponse.status === 'OK');
     try {
         if (privileged) {
-            await rateLimiterPrivileged.consume(req.ip);
+            await rateLimiterPrivileged.consume(req.connection.remoteAddress);
         } else {
-            await rateLimiterUnprivileged.consume(req.ip);
+            await rateLimiterUnprivileged.consume(req.connection.remoteAddress);
         }
         next();
     } catch (rejRes) {
@@ -120,9 +120,9 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
 
 const rateLimiterMiddlewareBefore = async (req, res, next) => {
     try {
-        let checkedResult = await IsIPBlocked(req.ip);
+        let checkedResult = await IsIPBlocked(req.connection.remoteAddress);
         if (!checkedResult.isBlocked) {
-            await rateLimitMaxRequestsByIP.consume(req.ip);
+            await rateLimitMaxRequestsByIP.consume(req.connection.remoteAddress);
             next();
         } else {
             res.status(429).send({
@@ -143,13 +143,13 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
 
 const rateLimiterMiddlewareAfter = async (req, res) => {
     try {
-        let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(req.ip);
+        let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(req.connection.remoteAddress);
         if (res.locals.middlewareResponse.consume) {
-            await rateLimitSlowBruteByIP.consume(req.ip);
+            await rateLimitSlowBruteByIP.consume(req.connection.remoteAddress);
             res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
         } else {
             if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > 0) {
-                await rateLimitSlowBruteByIP.delete(req.ip);
+                await rateLimitSlowBruteByIP.delete(req.connection.remoteAddress);
             }
             res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
         }
@@ -168,9 +168,9 @@ const rateLimiterMiddlewareAfter = async (req, res) => {
 const rateLimiterMiddlewareRegister = async (req, res) => {
     try {
         if (res.locals.middlewareResponse.inserted) {
-            await rateLimitMaxSuccessfulRegAttemptsByIP.consume(req.ip);
+            await rateLimitMaxSuccessfulRegAttemptsByIP.consume(req.connection.remoteAddress);
         } else {
-            await rateLimitMaxFailedRegAttemptsByIP.consume(req.ip);
+            await rateLimitMaxFailedRegAttemptsByIP.consume(req.connection.remoteAddress);
         }
         res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
     } catch (rejRes) {
