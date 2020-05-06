@@ -63,16 +63,27 @@ const IsIPBlocked = async (ip) => {
     let [retryAfterSeconds, isBlocked] = [0, false];
 
     if (resSlowBruteByIP !== null && resSlowBruteByIP.consumedPoints > maxWrongAttemptsByIPPerDay) {
-
+        
+        console.log('SLOW BRUTE = ', rateLimitSlowBruteByIP.getKey(ip));
+        
         retryAfterSeconds = Math.round(resSlowBruteByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
     } else if (resMaxSuccessfulRegAttemptsByIP !== null && resMaxSuccessfulRegAttemptsByIP.consumedPoints > maxSuccessfulRegAttemptByIPPerDay) {
+        
+        console.log('SUCCESSFUL REG = ', rateLimitMaxSuccessfulRegAttemptsByIP.getKey(ip));
+        
         retryAfterSeconds = Math.round(resMaxSuccessfulRegAttemptsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
     } else if (resMaxFailedRegAttemptsByIP !== null && resMaxFailedRegAttemptsByIP.consumedPoints > maxFailedRegAttemptByIPPerDay) {
+        
+        console.log('FAILED REG = ', rateLimitMaxFailedRegAttemptsByIP.getKey(ip));
+        
         retryAfterSeconds = Math.round(resMaxFailedRegAttemptsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
     } else if (resMaxRequestsByIP !== null && resMaxRequestsByIP.consumedPoints > maxRequestsByIPPerDay) {
+        
+        console.log('MAX REQ = ', rateLimitMaxRequestsByIP.getKey(ip));
+        
         retryAfterSeconds = Math.round(resMaxRequestsByIP.msBeforeNext / 1000) || 1;
         isBlocked = true;
     }
