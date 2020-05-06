@@ -1,9 +1,9 @@
 let {RateLimiterMemory} = require('rate-limiter-flexible');
 
-const maxWrongAttemptsByIPPerDay = 10;
-const maxRequestsByIPPerDay = 10000; // this enables one to send 5 req/second for 33 minutes :/
-const maxSuccessfulRegAttemptByIPPerDay = 5;
-const maxFailedRegAttemptByIPPerDay = 20;
+const maxWrongAttemptsByIPPerDay = 2;
+const maxRequestsByIPPerDay = 10; // this enables one to send 5 req/second for 33 minutes :/
+const maxSuccessfulRegAttemptByIPPerDay = 2;
+const maxFailedRegAttemptByIPPerDay = 3;
 
 const optsPrivileged = {
     keyPrefix: 'privileged',
@@ -20,29 +20,29 @@ const optsUnprivileged = {
 const optsSlowBruteByIP = {
     keyPrefix: 'login_fail_ip_per_day',
     points: maxWrongAttemptsByIPPerDay,
-    duration: 60 * 60,
-    blockDuration: 60 * 60 * 24 // Block for 1 day if 10 wrong attempts in an hour
+    duration: 30, //60 * 60,
+    blockDuration: 30 // 60 * 60 * 24 // Block for 1 day if 10 wrong attempts in an hour
 }
 
 const optsMaxRequestsByIP = {
     keyPrefix: 'rquest_by_ip_per_day',
     points: maxRequestsByIPPerDay,
-    duration: 60 * 60 * 24,
-    blockDuration: 60 * 60 * 24 * 365
+    duration: 30, //60 * 60 * 24,
+    blockDuration: 30 //60 * 60 * 24 * 365
 }
 
 const optsMaxSuccessfulRegAttemptsByIP = {
     keyPrefix: 'successful_reg_attempts_by_ip_per_day',
     points: maxSuccessfulRegAttemptByIPPerDay,
-    duration: 60 * 60 * 24,
-    blockDuration: 60 * 60 * 24
+    duration: 30, //60 * 60 * 24,
+    blockDuration: 30 //60 * 60 * 24
 }
 
 const optsMaxFailedRegAttemptsByIP = {
     keyPrefix: 'failed_reg_attempts_by_ip_per_day',
     points: maxFailedRegAttemptByIPPerDay,
-    duration: 60 * 60 * 24,
-    blockDuration: 60 * 60 * 24
+    duration: 30, //60 * 60 * 24,
+    blockDuration: 30 //60 * 60 * 24
 }
 
 const rateLimiterPrivileged = new RateLimiterMemory(optsPrivileged);
@@ -191,7 +191,7 @@ const rateLimiterMiddlewareAfter = async (req, res) => {
                 } else {
                     let rejRetryAfterSeconds = Math.round(results.errorObject.msBeforeNext / 1000) || 1;
                     res.status(429).send({
-                        message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
+                        message: `Too Many Requests`
                     });
                 }
             }

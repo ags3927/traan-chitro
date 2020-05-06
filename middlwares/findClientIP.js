@@ -6,6 +6,7 @@ const ipExtractionMiddleware = (req, res, next) => {
     console.log("IP Array in middleware:\n", ipArray);
 
     res.locals.ips = ipArray.filter(ip => {
+        ip = ip.trim();
         if (!(ip.startsWith('172.')
             || ip.startsWith('169.')
             || ip.startsWith('192.')
