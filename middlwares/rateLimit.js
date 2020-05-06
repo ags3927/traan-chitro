@@ -1,9 +1,9 @@
 let {RateLimiterMemory} = require('rate-limiter-flexible');
 
-const maxWrongAttemptsByIPPerDay = 10;
-const maxRequestsByIPPerDay = 10000; // this enables one to send 5 req/second for 33 minutes :/
-const maxSuccessfulRegAttemptByIPPerDay = 5;
-const maxFailedRegAttemptByIPPerDay = 20;
+const maxWrongAttemptsByIPPerDay = 2;
+const maxRequestsByIPPerDay = 10; // this enables one to send 5 req/second for 33 minutes :/
+const maxSuccessfulRegAttemptByIPPerDay = 2;
+const maxFailedRegAttemptByIPPerDay = 3;
 
 const optsPrivileged = {
     keyPrefix: 'privileged',
