@@ -12,9 +12,6 @@ let handlePOSTLogIn = async (req, res, next) => {
         let user = userData.data;
 
         if (user === null){
-            // res.status(401).send({
-            //     message: 'User does not exist'
-            // });
 
             res.locals.middlewareResponse = {
                 consume: true,
@@ -35,10 +32,6 @@ let handlePOSTLogIn = async (req, res, next) => {
             user.tokens.push({access,token});
             user.save();
 
-            // res.status(200).send({
-            //     token
-            // });
-
             res.locals.middlewareResponse = {
                 consume: false,
                 responseStatus: 200,
@@ -47,11 +40,6 @@ let handlePOSTLogIn = async (req, res, next) => {
 
             return next();
         } else {
-
-            // res.status(401).send({
-            //     message: 'Incorrect Username/Password'
-            // });
-
             res.locals.middlewareResponse = {
                 consume: true,
                 responseStatus: 500,
@@ -63,10 +51,6 @@ let handlePOSTLogIn = async (req, res, next) => {
             next();
         }
     } catch (e) {
-        // res.status(500).send({
-        //     message: "ERROR in POST /api/login\\Could not login"
-        // });
-
         res.locals.middlewareResponse = {
             consume: true,
             responseStatus: 500,

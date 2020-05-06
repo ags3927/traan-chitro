@@ -42,6 +42,7 @@ router.post('/logout',
 );
 
 router.patch('/orgdetails',
+    authenticate.handleAuthentication,
     organizationController.handlePATCHOrganizationDetails
 );
 

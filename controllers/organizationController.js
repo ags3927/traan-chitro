@@ -80,7 +80,7 @@ const handlePOSTRegister = async (req, res, next) => {
             next();
         } else {
             console.log("ERROR MESSAGE = ", result.message);
-            // res.status(400).send({
+            // res.status(500).send({
             //     message: 'Could not register',
             //     error: result.message
             // });
@@ -96,7 +96,7 @@ const handlePOSTRegister = async (req, res, next) => {
         }
     } catch (e) {
         console.log(e.message);
-        // res.status(500).send({
+        // return res.status(500).send({
         //     message: 'ERROR in GET /api/register\\Could not get register!',
         //     error: e.message
         // });

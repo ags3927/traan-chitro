@@ -28,9 +28,6 @@ const apiRouter = require('./routes/api');
 
 const app = express();
 
-//Proxy Handling
-app.set('trust proxy', false);
-
 //Rate Limiters and Authenticators
 app.use(rateLimiter.rateLimiterMiddlewareBefore);
 app.use(authenticator.handleAuthentication);
