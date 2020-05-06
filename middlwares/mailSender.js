@@ -15,17 +15,21 @@ const transporter = nodemailer.createTransport({
 
 
 let sendMail = async (req, res, next) => {
-  if (res.locals.middlewareResponse.inserted) {
-      let text = `${req.body.orgName} has requested for registration. Please check and verify.`;
-      let mailOptions = {
-          from,
-          to,
-          subject,
-          text
-      };
-      await transporter.sendMail(mailOptions)
+  try {
+      if (res.locals.middlewareResponse.inserted) {
+          let text = `${req.body.orgName} has requested for registration. Please check and verify.`;
+          let mailOptions = {
+              from,
+              to,
+              subject,
+              text
+          };
+          await transporter.sendMail(mailOptions)
+      }
+      next();
+  } catch (e) {
+      /// :/
   }
-  next();
 };
 
 module.exports = {
