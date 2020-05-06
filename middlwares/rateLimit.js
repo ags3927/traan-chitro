@@ -25,7 +25,7 @@ const optsSlowBruteByIP = {
 }
 
 const optsMaxRequestsByIP = {
-    keyPrefix: 'rquest_by_ip_per_day',
+    keyPrefix: 'request_by_ip_per_day',
     points: maxRequestsByIPPerDay,
     duration: 60*60*24,
     blockDuration: 60*60*24*365
