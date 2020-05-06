@@ -36,11 +36,11 @@ let headers = {
 //     donate: 'https://www.facebook/com/traanchitro'
 // };
 
-let userBody = {
-    orgName: 'Traan Chitro',
-    username: 'traanchitro',
-    password: 'traanchitro'
-}
+// let userBody = {
+//     orgName: 'Traan Chitro',
+//     username: 'traanchitro',
+//     password: 'traanchitro'
+// }
 
 // let activityBody = {
 //     orgName: 'Tran Chitro',
@@ -57,25 +57,25 @@ let userBody = {
 // let activitiesBody = JSON.parse(fs.readFileSync('activity.json'));
 // console.log(activitiesBody);
 
-let activitiesBody = [{
-    "orgName": "Songkolpo Foundation",
-    "typeOfRelief": [
-        "MEDICAL_SUPPLY"
-    ],
-    "location": {
-        "lat": 23.7956037,
-        "lng": 90.3536548
-    },
-    "supplyDate": "2020-03-20T17:59:40.000Z",
-    "contents": "44 pcs + 44 pcs"
-}];
+// let activitiesBody = [{
+//     "orgName": "Songkolpo Foundation",
+//     "typeOfRelief": [
+//         "MEDICAL_SUPPLY"
+//     ],
+//     "location": {
+//         "lat": 23.7956037,
+//         "lng": 90.3536548
+//     },
+//     "supplyDate": "2020-03-20T17:59:40.000Z",
+//     "contents": "44 pcs + 44 pcs"
+// }];
 
-// let url = 'https://rate-limited-dot-protean-smile-275412.el.r.appspot.com/api/login';
-let url = 'https://protean-smile-275412.el.r.appspot.com/api/activities';
+let url = 'https://rate-limited-dot-protean-smile-275412.el.r.appspot.com/api/pins';
+// let url = 'https://protean-smile-275412.el.r.appspot.com/api/activities';
 // let url = 'http://localhost:3000/api/activities'
 
-axios.post(url, activitiesBody, {
-    headers
+axios.get(url, {
+    params
 }).then((res) => {
 
     console.log('response = ', res.data);
