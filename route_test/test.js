@@ -1,4 +1,5 @@
 let axios = require('axios');
+let fs = require('fs');
 
 let params = {
     bounds: {
@@ -53,10 +54,27 @@ let userBody = {
 //     redundant: false
 // }
 
-let url = 'https://stormy-lake-20015.herokuapp.com/api/login';
-// let url = 'http://localhost:3000/api/login'
+// let activitiesBody = JSON.parse(fs.readFileSync('activity.json'));
+// console.log(activitiesBody);
 
-axios.post(url, userBody, {
+let activitiesBody = [{
+    "orgName": "Songkolpo Foundation",
+    "typeOfRelief": [
+        "MEDICAL_SUPPLY"
+    ],
+    "location": {
+        "lat": 23.7956037,
+        "lng": 90.3536548
+    },
+    "supplyDate": "2020-03-20T17:59:40.000Z",
+    "contents": "44 pcs + 44 pcs"
+}];
+
+// let url = 'https://rate-limited-dot-protean-smile-275412.el.r.appspot.com/api/login';
+let url = 'https://protean-smile-275412.el.r.appspot.com/api/activities';
+// let url = 'http://localhost:3000/api/activities'
+
+axios.post(url, activitiesBody, {
     headers
 }).then((res) => {
 
@@ -67,7 +85,7 @@ axios.post(url, userBody, {
     console.log('error =', e.response.data);
 
 }).finally(() => {
-    
+
     console.log('loaded finished');
 
 });

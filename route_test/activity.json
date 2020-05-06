@@ -1,0 +1,280 @@
+[
+  {
+    "orgName": "Ashia Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.871349,
+      "lng": 90.3972052
+    },
+    "supplyDate": "2020-04-12T17:59:40.000Z"
+  },
+  {
+    "orgName": "Ashia Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.8713904,
+      "lng": 90.380721
+    },
+    "supplyDate": "2020-04-12T17:59:40.000Z"
+  },
+  {
+    "orgName": "Ashia Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.8713728,
+      "lng": 90.38778479999999
+    },
+    "supplyDate": "2020-04-12T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.8281718,
+      "lng": 89.7833312
+    },
+    "supplyDate": "2020-04-19T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7483949,
+      "lng": 89.93700109999999
+    },
+    "supplyDate": "2020-04-19T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.1557472,
+      "lng": 91.96858259999999
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.0407988,
+      "lng": 91.8733017
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.6523678,
+      "lng": 85.56121
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 22.8417234,
+      "lng": 91.83671
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.2408468,
+      "lng": 92.0640687
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "We",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7729851,
+      "lng": 91.2674411
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z"
+  },
+  {
+    "orgName": "Songkolpo Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7956037,
+      "lng": 90.3536548
+    },
+    "supplyDate": "2020-04-25T17:59:40.000Z",
+    "contents": "100 Person"
+  },
+  {
+    "orgName": "Songkolpo Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7956037,
+      "lng": 90.3536548
+    },
+    "supplyDate": "2020-04-06T17:59:40.000Z",
+    "contents": "38 Family"
+  },
+  {
+    "orgName": "Songkolpo Foundation",
+    "typeOfRelief": [
+      "MEDICAL_SUPPLY"
+    ],
+    "location": {
+      "lat": 23.7956037,
+      "lng": 90.3536548
+    },
+    "supplyDate": "2020-03-20T17:59:40.000Z",
+    "contents": "44 pcs + 44 pcs"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.8311224,
+      "lng": 90.4243013
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.8214144,
+      "lng": 90.4184514
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 27.234414,
+      "lng": 119.8962866
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 22.3380628,
+      "lng": 91.7934492
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7777571,
+      "lng": 90.40574079999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.759815,
+      "lng": 90.39131719999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7726878,
+      "lng": 90.40576829999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.769424,
+      "lng": 90.41428529999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7417846,
+      "lng": 90.40579749999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7381866,
+      "lng": 90.41428529999999
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  },
+  {
+    "orgName": "Perception Foundation",
+    "typeOfRelief": [
+      "FOOD"
+    ],
+    "location": {
+      "lat": 23.7336922,
+      "lng": 90.4260691
+    },
+    "supplyDate": "2020-04-03T17:59:40.000Z"
+  }
+]

@@ -120,6 +120,9 @@ const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => 
 
 const rateLimiterMiddlewareBefore = async (req, res, next) => {
     try {
+
+        console.log('X-Forward-For = ', req.header['X-Forward-For']);
+
         let checkedResult = await IsIPBlocked(req.connection.remoteAddress);
         if (!checkedResult.isBlocked) {
             await rateLimitMaxRequestsByIP.consume(req.connection.remoteAddress);
