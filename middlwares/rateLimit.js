@@ -27,22 +27,22 @@ const optsSlowBruteByIP = {
 const optsMaxRequestsByIP = {
     keyPrefix: 'rquest_by_ip_per_day',
     points: maxRequestsByIPPerDay,
-    duration: 60*60*24,
-    blockDuration: 60*60*24*365
+    duration: 60 * 60 * 24,
+    blockDuration: 60 * 60 * 24 * 365
 }
 
 const optsMaxSuccessfulRegAttemptsByIP = {
     keyPrefix: 'successful_reg_attempts_by_ip_per_day',
     points: maxSuccessfulRegAttemptByIPPerDay,
-    duration: 60*60*24,
-    blockDuration: 60*60*24
+    duration: 60 * 60 * 24,
+    blockDuration: 60 * 60 * 24
 }
 
 const optsMaxFailedRegAttemptsByIP = {
     keyPrefix: 'failed_reg_attempts_by_ip_per_day',
     points: maxFailedRegAttemptByIPPerDay,
-    duration: 60*60*24,
-    blockDuration: 60*60*24
+    duration: 60 * 60 * 24,
+    blockDuration: 60 * 60 * 24
 }
 
 const rateLimiterPrivileged = new RateLimiterMemory(optsPrivileged);
@@ -59,6 +59,9 @@ const IsIPBlocked = async (ips) => {
     let resMaxFailedRegAttemptsByIP;
     let [retryAfterSeconds, isBlocked] = [0, false];
     for (const ip of ips) {
+
+        console.log("IP Address = ", ip);
+
         resSlowBruteByIP = await rateLimitSlowBruteByIP.get(ip);
         resMaxRequestsByIP = await rateLimitMaxRequestsByIP.get(ip);
         resMaxSuccessfulRegAttemptsByIP = await rateLimitMaxSuccessfulRegAttemptsByIP.get(ip);
@@ -91,11 +94,11 @@ const consumeIPs = async (ips, consumer) => {
     try {
         for (const ip of ips) {
             await consumer.consume(ip);
-            return {
-                consumed: true,
-                errorObject: null
-            };
         }
+        return {
+            consumed: true,
+            errorObject: null
+        };
     } catch (rejRes) {
         return {
             consumed: false,
@@ -105,15 +108,15 @@ const consumeIPs = async (ips, consumer) => {
 }
 
 const rateLimiterMiddlewareInMemoryWithAuthChecking = async (req, res, next) => {
-    let privileged = (res.locals.middlewareResponse.status === 'OK');
     try {
+        let privileged = (res.locals.middlewareResponse.status === 'OK');
         let results;
         if (privileged) {
-            // await rateLimiterPrivileged.consume(req.ip);
-            results = await consumeIPs(res.locals.ips,rateLimiterPrivileged);
+
+            results = await consumeIPs(res.locals.ips, rateLimiterPrivileged);
         } else {
-            // await rateLimiterUnprivileged.consume(req.ip);
-            results = await consumeIPs(res.locals.ips,rateLimiterUnprivileged);
+
+            results = await consumeIPs(res.locals.ips, rateLimiterUnprivileged);
         }
         //next();
         if (results.consumed) {
@@ -141,9 +144,8 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
         let checkedResult = await IsIPBlocked(res.locals.ips);
         let results;
         if (!checkedResult.isBlocked) {
-            // await rateLimitMaxRequestsByIP.consume(req.ip);
-            // next();
-            results = await consumeIPs(res.locals.ips,rateLimitMaxRequestsByIP);
+
+            results = await consumeIPs(res.locals.ips, rateLimitMaxRequestsByIP);
             if (results.consumed) {
                 next();
             } else {
@@ -154,24 +156,17 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
                 } else {
                     let rejRetryAfterSeconds = Math.round(results.errorObject.msBeforeNext / 1000) || 1;
                     res.status(429).send({
-                        message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
+                        message: `Too Many Requests`
                     });
                 }
             }
         } else {
             res.status(429).send({
-                message: `Too Many Requests\nRetry after ${checkedResult.retryAfterSeconds} second(s)`
+                message: `Too Many Requests`
             });
         }
     } catch (e) {
-        // if (rejRes instanceof Error) {
-        //     res.status(500).send(rejRes.message);
-        // } else {
-        //     let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
-        //     res.status(429).send({
-        //         message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
-        //     });
-        // }
+
         res.status(500).send({
             message: 'Error in rate limiting middleware'
         });
@@ -180,13 +175,12 @@ const rateLimiterMiddlewareBefore = async (req, res, next) => {
 
 const rateLimiterMiddlewareAfter = async (req, res) => {
     try {
-        //let resSlowBruteByIP = await rateLimitSlowBruteByIP.get(req.ip);
+
         let results;
         let resSlowBruteByIP;
         if (res.locals.middlewareResponse.consume) {
-            // await rateLimitSlowBruteByIP.consume(req.ip);
-            // res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
-            results = await consumeIPs(res.locals.ips,rateLimitSlowBruteByIP);
+
+            results = await consumeIPs(res.locals.ips, rateLimitSlowBruteByIP);
             if (results.consumed) {
                 res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
             } else {
@@ -212,14 +206,7 @@ const rateLimiterMiddlewareAfter = async (req, res) => {
             res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
         }
     } catch (e) {
-        // if (rejRes instanceof Error) {
-        //     res.status(500).send(rejRes.message);
-        // } else {
-        //     let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
-        //     res.status(429).send({
-        //         message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
-        //     });
-        // }
+
         res.status(500).send({
             message: 'Error in rate limiting middleware'
         });
@@ -230,10 +217,10 @@ const rateLimiterMiddlewareRegister = async (req, res) => {
     try {
         let results;
         if (res.locals.middlewareResponse.inserted) {
-            // await rateLimitMaxSuccessfulRegAttemptsByIP.consume(req.ip);
+
             results = await consumeIPs(res.locals.ips, rateLimitMaxSuccessfulRegAttemptsByIP);
         } else {
-            // await rateLimitMaxFailedRegAttemptsByIP.consume(req.ip);
+
             results = await consumeIPs(res.locals.ips, rateLimitMaxFailedRegAttemptsByIP);
         }
 
@@ -252,21 +239,14 @@ const rateLimiterMiddlewareRegister = async (req, res) => {
                 } else {
                     let rejRetryAfterSeconds = Math.round(results.errorObject.msBeforeNext / 1000) || 1;
                     res.status(429).send({
-                        message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
+                        message: `Too Many Requests`
                     });
                 }
             }
         }
-        // res.status(res.locals.middlewareResponse.responseStatus).send(res.locals.middlewareResponse.responseObject);
+
     } catch (e) {
-        // if (rejRes instanceof Error) {
-        //     res.status(500).send(rejRes.message);
-        // } else {
-        //     let rejRetryAfterSeconds = Math.round(rejRes.msBeforeNext / 1000) || 1;
-        //     res.status(429).send({
-        //         message: `Too Many Requests\nRetry after ${rejRetryAfterSeconds} second(s)`
-        //     });
-        // }
+
         res.status(500).send({
             message: 'Error in rate limiting middleware'
         });

@@ -1,16 +1,25 @@
 const _ = require('lodash');
-const findClientIP = (req, res, next) => {
+
+const ipExtractionMiddleware = (req, res, next) => {
     let ipArray = req.header('X-Forwarded-For').split(',');
-    let consumableIPs = ipArray.filter(ip => {
-        if (!(ip.startsWith('172.') || ip.startsWith('169.') || ip.startsWith('192.') || ip.startsWith('10.'))){
+
+    console.log("IP Array in middleware:\n", ipArray);
+
+    res.locals.ips = ipArray.filter(ip => {
+        if (!(ip.startsWith('172.')
+            || ip.startsWith('169.')
+            || ip.startsWith('192.')
+            || ip.startsWith('10.')
+            || ip.startsWith('127.'))) {
             return ip;
         }
     });
 
-    res.locals.ips = consumableIPs;
+    console.log("Filtered IP Array in middleware:\n", res.locals.ips);
+
     next();
 }
 
 module.exports = {
-    findClientIP
+    ipExtractionMiddleware
 };

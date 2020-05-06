@@ -21,6 +21,7 @@ const logger = require('morgan');
 
 const rateLimiter = require('./middlwares/rateLimit');
 const authenticator = require('./middlwares/authenticate');
+const findClientIP = require('./middlwares/findClientIP');
 
 //Routers
 const indexRouter = require('./routes');
@@ -29,6 +30,7 @@ const apiRouter = require('./routes/api');
 const app = express();
 
 //Rate Limiters and Authenticators
+app.use(findClientIP.ipExtractionMiddleware);
 app.use(rateLimiter.rateLimiterMiddlewareBefore);
 app.use(authenticator.handleAuthentication);
 app.use(rateLimiter.rateLimiterMiddlewareInMemoryWithAuthChecking);
